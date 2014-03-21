@@ -1,11 +1,11 @@
-import time
+import tutum
 from requests import Request, Session
 from urlparse import urljoin
 from error import TutumErrorHTTP
 
 BASE_URL = "https://app-test.tutum.co/api/v1/"
 
-def send_request(method, path, username=None, apikey=None, **kwargs):
+def send_request(method, path, **kwargs):
     json = None
     url  = urljoin(BASE_URL, path.strip("/"))
     try:
@@ -13,8 +13,8 @@ def send_request(method, path, username=None, apikey=None, **kwargs):
         headers = {}
         headers['Content-Type']  = 'application/json'
         headers['User-Agent']    = 'python-tutum/v1.0'
-        if username and apikey:
-            headers['Authorization'] = 'ApiKey %s:%s' % (username, apikey)
+        if tutum.user and tutum.apikey:
+            headers['Authorization'] = 'ApiKey %s:%s' % (tutum.user, tutum.apikey)
         # construct request
         s = Session()
         req = Request('GET', url, headers=headers, **kwargs)

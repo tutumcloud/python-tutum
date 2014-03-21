@@ -1,15 +1,15 @@
 from http import send_request
 
-def list_containers(username, apikey):
+def list_containers():
     """
     Returns a list of Container objects for the given apikey.
     """
-    json = send_request('GET', '/container', username=username, apikey=apikey)
-    json_objects = json.get('objects', [])
     containers = []
-    for obj in json_objects:
-        instance = Container(obj)
-        containers.append(instance)
+    json = send_request('GET', '/container')
+    if json:
+        json_objects = json.get('objects', [])
+        for obj in json_objects:
+            containers.append(Container(obj))
     return containers
 
 class Container(object):

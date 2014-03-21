@@ -1,21 +1,15 @@
-from tutum.api import auth, container
+from tutum.api.auth import authenticate, is_authenticated
+from tutum.api.container import list_containers
 
 def main():
-
-    username = "admin"
-    password = "XXXXX"
-
-    apikey = auth.get_apikey(username, password)
-
-    if apikey:
-
-        print "Success!"
-        print "Listing your containers:"
-        containers = container.list_containers(username, apikey)
+    success = authenticate('admin', 'XXXXXX')
+    if not success:
+        print "Invalid login."
+    else:
+        print "Login successful. Listing your containers:"
+        containers = list_containers()
         for c in containers:
             print c.uuid
-    else:
-        print "Invalid username or password, please try again."
 
 if __name__ == "__main__":
     main()

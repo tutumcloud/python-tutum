@@ -1,9 +1,10 @@
+import tutum
 from http import send_request
 from requests.auth import HTTPBasicAuth
 
-def get_apikey(username, password):
+def authenticate(username, password):
     """
-    Returns the user's apikey, or None if the credentials are invalid
+    Authenticates a Tutum user
     """
     auth = HTTPBasicAuth(username, password)
     json = send_request("GET", "/auth", auth=auth)
@@ -12,4 +13,22 @@ def get_apikey(username, password):
         objects = json.get('objects', None)
         if objects and len(objects) > 0:
             apikey = objects[0].get('key')
-    return apikey
+    success = False
+    if apikey:
+        success = True
+        tutum.user = username
+        tutum.apikey = apikey
+    return success
+
+def is_authenticated():
+    """
+    Returns whether the tutum user and apikey is set
+    """
+    return tutum.user != None and tutum.apikey != None
+
+def logout():
+    """
+    Sets the tutum user and apikey to None
+    """
+    tutum.user = None
+    tutum.apikey = None
