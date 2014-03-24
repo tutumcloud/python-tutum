@@ -6,6 +6,18 @@ def authenticate(username, password):
     """
     Authenticates a Tutum user
     """
+    success = False
+    apikey  = get_apikey(username, password)
+    if apikey:
+        success = True
+        tutum.user = username
+        tutum.apikey = apikey
+    return success
+
+def get_apikey(username, password):
+    """
+    Returns the user's apikey, or None if username/password incorrect
+    """
     auth = HTTPBasicAuth(username, password)
     json = send_request("GET", "/auth", auth=auth)
     apikey = None
@@ -13,12 +25,7 @@ def authenticate(username, password):
         objects = json.get('objects', None)
         if objects and len(objects) > 0:
             apikey = objects[0].get('key')
-    success = False
-    if apikey:
-        success = True
-        tutum.user = username
-        tutum.apikey = apikey
-    return success
+    return apikey
 
 def is_authenticated():
     """

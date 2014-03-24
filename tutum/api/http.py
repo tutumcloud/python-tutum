@@ -1,13 +1,15 @@
-import tutum
+import tutum, logging
 from requests import Request, Session
 from urlparse import urljoin
-from error import TutumErrorHTTP
 
 BASE_URL = "https://app-test.tutum.co/api/v1/"
 
 def send_request(method, path, **kwargs):
     json = None
     url  = urljoin(BASE_URL, path.strip("/"))
+    if not url.endswith("/"):
+        url = "%s/" % url
+    logging.info("%s %s %s" % (method, url, kwargs))
     try:
         # construct headers
         headers = {}
@@ -17,10 +19,11 @@ def send_request(method, path, **kwargs):
             headers['Authorization'] = 'ApiKey %s:%s' % (tutum.user, tutum.apikey)
         # construct request
         s = Session()
-        req = Request('GET', url, headers=headers, **kwargs)
+        req = Request(method, url, headers=headers, **kwargs)
         # make the request
         response = s.send(req.prepare())
         status_code = getattr(response, 'status_code', None)
+        logging.info("Status: %s", str(status_code))
         # handle the response
         if status_code >= 200 and status_code <= 299:
             # Success.
@@ -28,13 +31,14 @@ def send_request(method, path, **kwargs):
                 # Try to parse the response
                 json = response.json()
             except Exception as e:
-                raise TutumErrorHTTP("Error parsing JSON (%s)" % url)
+                # We failed to parse the JSON
+                logging.error("Error parsing JSON response (%s)" % url)
         elif not status_code:
              # Most likely network trouble
-            raise TutumErrorHTTP("No response (%s)" % url)
+            logging.error("No response (%s)" % url)
         elif status_code < 200 or status_code > 299:
              # Server returned an error
-            raise TutumErrorHTTP("Recieved status %s (%s)" % (str(status_code), url))
+            logging.error("Recieved status %s (%s)" % (str(status_code), url))
     except Exception as e:
         print e
     return json

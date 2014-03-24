@@ -1,15 +1,18 @@
 from tutum.api.auth import authenticate, is_authenticated
-from tutum.api.container import list_containers
+from tutum.api.container import Container
+from tutum.api.application import Application
 
 def main():
-    success = authenticate('admin', 'XXXXXX')
-    if not success:
-        print "Invalid login."
+    if is_authenticated():
+        print "Listing containers:"
+        print Container.list()
+        print "Listing applications:"
+        print Application.list()
     else:
-        print "Login successful. Listing your containers:"
-        containers = list_containers()
-        for c in containers:
-            print c.uuid
+        print """
+        You are not authenticated. Either set TUTUM_USER and TUTUM_APIKEY
+        in your environment, or use tutum.api.auth.authenticate.
+        """
 
 if __name__ == "__main__":
     main()
