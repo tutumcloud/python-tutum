@@ -1,3 +1,4 @@
+import json as json_parser
 from http import send_request
 from urlparse import urljoin
 
@@ -9,6 +10,38 @@ class RESTModel(object):
         """
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+    def __setattr__(self, name, value):
+        """
+        Keep track of what attributes have been set.
+        """
+        current_value = getattr(self, name, None)
+        if value != current_value:
+            changed_attrs = self.__getchanges__()
+            if not name in changed_attrs:
+                changed_attrs.append(name)
+                self.__setchanges__(changed_attrs)
+        super(RESTModel, self).__setattr__(name, value)
+
+    def __getchanges__(self):
+        """
+        Internal. Convencience method to get the changed attrs list.
+        """
+        return getattr(self, '__changedattrs__', [])
+
+    def __setchanges__(self, val):
+        """
+        Internal. Convencience method to set the changed attrs list.
+        """
+        # Use the super implementation to prevent infinite recursion
+        super(RESTModel, self).__setattr__('__changedattrs__', val)
+
+    @property
+    def is_dirty(self):
+        """
+        Returns whether or not the model has unsaved changes.
+        """
+        return len(self.__getchanges__()) > 0
 
     @classmethod
     def list(cls):
@@ -23,7 +56,9 @@ class RESTModel(object):
         if json:
             json_objects = json.get('objects', [])
             for json_obj in json_objects:
-                containers.append(cls(**json_obj))
+                instance = cls(**json_obj)
+                instance.__setchanges__([])
+                containers.append(instance)
         return containers
 
     @classmethod
@@ -38,42 +73,48 @@ class RESTModel(object):
         json = send_request('GET', "/".join([endpoint, uuid]))
         if json:
             instance = cls(**json)
+            instance.__setchanges__([])
         return instance
 
     def save(self):
         """
         Create or update a model.
         """
-        cls      = self.__class__
-        endpoint = getattr(cls, 'endpoint', None)
-        if not endpoint:
-            raise Exception("Endpoint not specified for %s" % cls.__name__)
-        # Figure out whether we should do a create or update
-        uuid     = getattr(self, 'uuid', None)
-        action   = None
-        url      = None
-        attrs    = None
-        if not uuid:
-            action  = "POST"
-            url     = endpoint
-            attrs   = getattr(cls, 'params_for_create', None)
-        else:
-            action  = "PUT"
-            url     = "/".join([endpoint, uuid])
-            attrs   = getattr(cls, 'params_for_update', None)
-        if not attrs:
-            raise Exception("Don't know how to %s %s object." % (action, cls.__name__))
-        # Construct the necessary params
-        params = {}
-        for attr in attrs:
-            value = getattr(self, attr, None)
-            if value:
-                params[attr] = value
-        # Make the request
         success = False
-        json    = send_request(action, url, params=params)
-        if json:
-            for k, v in json.items():
-                setattr(self, k, v)
+        if not self.is_dirty:
+            # No changes
             success = True
+        else:
+            cls      = self.__class__
+            endpoint = getattr(cls, 'endpoint', None)
+            if not endpoint:
+                raise Exception("Endpoint not specified for %s" % cls.__name__)
+            # Figure out whether we should do a create or update
+            action   = None
+            url      = None
+            uuid     = getattr(self, 'uuid', None)
+            if not uuid:
+                action  = "POST"
+                url     = endpoint
+            else:
+                action  = "PATCH"
+                url     = "/".join([endpoint, uuid])
+            # Construct the necessary params
+            params = {}
+            for attr in self.__getchanges__():
+                value = getattr(self, attr, None)
+                if value:
+                    params[attr] = value
+            # Construct the json body
+            payload = None
+            if params:
+                payload = json_parser.dumps(params)
+            # Make the request
+            success = False
+            json    = send_request(action, url, data=payload)
+            if json:
+                for k, v in json.items():
+                    setattr(self, k, v)
+                self.__setchanges__([])
+                success = True
         return success
