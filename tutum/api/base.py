@@ -1,6 +1,7 @@
 import json as json_parser
+
 from http import send_request
-from urlparse import urljoin
+
 
 class RESTModel(object):
 

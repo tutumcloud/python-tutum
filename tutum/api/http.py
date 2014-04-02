@@ -1,15 +1,18 @@
-import tutum, logging
-from requests import Request, Session
+import logging
 from urlparse import urljoin
 
-BASE_URL = "https://app-test.tutum.co/api/v1/"
+from requests import Request, Session
+
+import tutum
+
 
 class TutumServerError(Exception):
     pass
 
+
 def send_request(method, path, **kwargs):
     json = None
-    url  = urljoin(BASE_URL, path.strip("/"))
+    url  = urljoin(tutum.base_url, path.strip("/"))
     if not url.endswith("/"):
         url = "%s/" % url
     logging.info("%s %s %s" % (method, url, kwargs))
