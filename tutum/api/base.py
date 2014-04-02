@@ -63,6 +63,7 @@ class RESTModel(object):
             json_objects = json.get('objects', [])
             for json_obj in json_objects:
                 instance = cls(**json_obj)
+                instance._detail_uri = "/".join([endpoint, instance.pk])
                 instance.__setchanges__([])
                 containers.append(instance)
         return containers
@@ -122,8 +123,30 @@ class RESTModel(object):
             if json:
                 for k, v in json.items():
                     setattr(self, k, v)
+                self._detail_uri = "/".join([endpoint, self.pk])
                 self.__setchanges__([])
                 success = True
+        return success
+
+    def delete(self):
+        """
+        Deletes the model in Tutum
+        """
+        success = False
+        cls = self.__class__
+        endpoint = getattr(cls, 'endpoint', None)
+        if not endpoint:
+            raise Exception("Endpoint not specified for %s" % cls.__name__)
+        if not self._detail_uri:
+            raise Exception("Object does not exist in Tutum")
+        action  = "DELETE"
+        url     = self._detail_uri
+        json = send_request(action, url)
+        if json:
+            for k, v in json.items():
+                setattr(self, k, v)
+            self.__setchanges__([])
+            success = True
         return success
 
     @classmethod
