@@ -4,10 +4,7 @@ from urlparse import urljoin
 from requests import Request, Session
 
 import tutum
-
-
-class TutumServerError(Exception):
-    pass
+from tutum.api.exceptions import TutumApiError
 
 
 def send_request(method, path, **kwargs):
@@ -32,16 +29,16 @@ def send_request(method, path, **kwargs):
     # handle the response
     if not status_code:
         # Most likely network trouble
-        raise TutumServerError("No Response (%s %s)" % (method, url))
+        raise TutumApiError("No Response (%s %s)" % (method, url))
     elif status_code >= 200 and status_code <= 299:
         # Success. Try to parse the response.
         try:
             json = response.json()
         except Exception as e:
             logging.error("Response: %s", response.text)
-            raise TutumServerError("JSON Parse Error (%s %s)" % (method, url))
+            raise TutumApiError("JSON Parse Error (%s %s)" % (method, url))
     else:
          # Server returned an error.
         logging.error("Response: %s", response.text)
-        raise TutumServerError("Status %s (%s %s)" % (str(status_code), method, url))
+        raise TutumApiError("Status %s (%s %s)" % (str(status_code), method, url))
     return json

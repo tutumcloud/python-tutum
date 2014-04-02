@@ -1,0 +1,2 @@
+class TutumApiError(Exception):
+    pass

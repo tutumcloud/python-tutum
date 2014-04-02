@@ -1,6 +1,8 @@
 import json as json_parser
+from urlparse import urljoin
 
 from http import send_request
+from tutum.api.exceptions import TutumApiError
 
 
 class RESTModel(object):
@@ -43,8 +45,7 @@ class RESTModel(object):
         Internal. Sets the model attributes to the dictionary values passed
         """
         endpoint = getattr(self, 'endpoint', None)
-        if not endpoint:
-            raise Exception("Endpoint not specified for %s" % self.__class__.__name__)
+        assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
         for k, v in dict.items():
             setattr(self, k, v)
         self._detail_uri = "/".join([endpoint, self.pk])
@@ -68,8 +69,7 @@ class RESTModel(object):
         """
         containers = []
         endpoint = getattr(cls, 'endpoint', None)
-        if not endpoint:
-            raise Exception("Endpoint not specified for %s" % cls.__name__)
+        assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
         json = send_request('GET', endpoint)
         if json:
             json_objects = json.get('objects', [])
@@ -86,8 +86,7 @@ class RESTModel(object):
         """
         instance = None
         endpoint = getattr(cls, 'endpoint', None)
-        if not endpoint:
-            raise Exception("Endpoint not specified for %s" % cls.__name__)
+        assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
         detail_uri = "/".join([endpoint, pk])
         json = send_request('GET', detail_uri)
         if json:
@@ -106,8 +105,7 @@ class RESTModel(object):
         else:
             cls = self.__class__
             endpoint = getattr(cls, 'endpoint', None)
-            if not endpoint:
-                raise Exception("Endpoint not specified for %s" % cls.__name__)
+            assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
             # Figure out whether we should do a create or update
             if not self._detail_uri:
                 action = "POST"
@@ -142,7 +140,7 @@ class RESTModel(object):
             # We have local non-committed changes - rejecting the refresh
             success = False
         elif not self._detail_uri:
-            raise Exception("Object does not exist in Tutum")
+            raise TutumApiError("You must save the object before performing this operation")
         else:
             json = send_request("GET", self._detail_uri)
             if json:
@@ -156,7 +154,7 @@ class RESTModel(object):
         """
         success = False
         if not self._detail_uri:
-            raise Exception("Object does not exist in Tutum")
+            raise TutumApiError("You must save the object before performing this operation")
         action = "DELETE"
         url = self._detail_uri
         json = send_request(action, url)
@@ -164,6 +162,32 @@ class RESTModel(object):
             self._loaddict(json)
             success = True
         return success
+
+    def _perform_action(self, action):
+        """
+        Internal. Performs the specified action on the object remotely
+        """
+        success = False
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, action])
+        json = send_request("POST", url)
+        if json:
+            self._loaddict(json)
+            success = True
+        return success
+
+    def _expand_attribute(self, attribute):
+        """
+        Internal. Expands the given attribute from remote information
+        """
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, attribute])
+        json = send_request("GET", url)
+        if json:
+            return json[attribute]
+        return None
 
     @classmethod
     def create(cls, **kwargs):
