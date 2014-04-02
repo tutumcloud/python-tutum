@@ -4,6 +4,7 @@ from http import send_request
 
 
 class RESTModel(object):
+    _detail_uri = None
 
     def __init__(self, **kwargs):
         """
@@ -26,16 +27,20 @@ class RESTModel(object):
 
     def __getchanges__(self):
         """
-        Internal. Convencience method to get the changed attrs list.
+        Internal. Convenience method to get the changed attrs list.
         """
         return getattr(self, '__changedattrs__', [])
 
     def __setchanges__(self, val):
         """
-        Internal. Convencience method to set the changed attrs list.
+        Internal. Convenience method to set the changed attrs list.
         """
         # Use the super implementation to prevent infinite recursion
         super(RESTModel, self).__setattr__('__changedattrs__', val)
+
+    @property
+    def pk(self):
+        return getattr(self, 'uuid', None)
 
     @property
     def is_dirty(self):
@@ -63,23 +68,25 @@ class RESTModel(object):
         return containers
 
     @classmethod
-    def fetch(cls, uuid):
+    def fetch(cls, pk):
         """
-        Fetch an individual model given the uuid.
+        Fetch an individual model given the pk.
         """
         instance = None
         endpoint = getattr(cls, 'endpoint', None)
         if not endpoint:
             raise Exception("Endpoint not specified for %s" % cls.__name__)
-        json = send_request('GET', "/".join([endpoint, uuid]))
+        detail_uri = "/".join([endpoint, pk])
+        json = send_request('GET', detail_uri)
         if json:
             instance = cls(**json)
+            instance._detail_uri = detail_uri
             instance.__setchanges__([])
         return instance
 
     def save(self):
         """
-        Create or update a model.
+        Create or update the model in Tutum
         """
         success = False
         if not self.is_dirty:
@@ -93,13 +100,12 @@ class RESTModel(object):
             # Figure out whether we should do a create or update
             action   = None
             url      = None
-            uuid     = getattr(self, 'uuid', None)
-            if not uuid:
+            if not self._detail_uri:
                 action  = "POST"
                 url     = endpoint
             else:
                 action  = "PATCH"
-                url     = "/".join([endpoint, uuid])
+                url     = self._detail_uri
             # Construct the necessary params
             params = {}
             for attr in self.__getchanges__():
@@ -119,3 +125,7 @@ class RESTModel(object):
                 self.__setchanges__([])
                 success = True
         return success
+
+    @classmethod
+    def create(cls, **kwargs):
+        return cls(**kwargs)
