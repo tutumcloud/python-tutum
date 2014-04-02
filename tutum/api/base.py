@@ -38,6 +38,18 @@ class RESTModel(object):
         # Use the super implementation to prevent infinite recursion
         super(RESTModel, self).__setattr__('__changedattrs__', val)
 
+    def _loaddict(self, dict):
+        """
+        Internal. Sets the model attributes to the dictionary values passed
+        """
+        endpoint = getattr(self, 'endpoint', None)
+        if not endpoint:
+            raise Exception("Endpoint not specified for %s" % self.__class__.__name__)
+        for k, v in dict.items():
+            setattr(self, k, v)
+        self._detail_uri = "/".join([endpoint, self.pk])
+        self.__setchanges__([])
+
     @property
     def pk(self):
         return getattr(self, 'uuid', None)
@@ -62,9 +74,8 @@ class RESTModel(object):
         if json:
             json_objects = json.get('objects', [])
             for json_obj in json_objects:
-                instance = cls(**json_obj)
-                instance._detail_uri = "/".join([endpoint, instance.pk])
-                instance.__setchanges__([])
+                instance = cls()
+                instance._loaddict(json_obj)
                 containers.append(instance)
         return containers
 
@@ -80,9 +91,8 @@ class RESTModel(object):
         detail_uri = "/".join([endpoint, pk])
         json = send_request('GET', detail_uri)
         if json:
-            instance = cls(**json)
-            instance._detail_uri = detail_uri
-            instance.__setchanges__([])
+            instance = cls()
+            instance._loaddict(json)
         return instance
 
     def save(self):
@@ -94,19 +104,17 @@ class RESTModel(object):
             # No changes
             success = True
         else:
-            cls      = self.__class__
+            cls = self.__class__
             endpoint = getattr(cls, 'endpoint', None)
             if not endpoint:
                 raise Exception("Endpoint not specified for %s" % cls.__name__)
             # Figure out whether we should do a create or update
-            action   = None
-            url      = None
             if not self._detail_uri:
-                action  = "POST"
-                url     = endpoint
+                action = "POST"
+                url = endpoint
             else:
-                action  = "PATCH"
-                url     = self._detail_uri
+                action = "PATCH"
+                url = self._detail_uri
             # Construct the necessary params
             params = {}
             for attr in self.__getchanges__():
@@ -119,12 +127,26 @@ class RESTModel(object):
                 payload = json_parser.dumps(params)
             # Make the request
             success = False
-            json    = send_request(action, url, data=payload)
+            json = send_request(action, url, data=payload)
             if json:
-                for k, v in json.items():
-                    setattr(self, k, v)
-                self._detail_uri = "/".join([endpoint, self.pk])
-                self.__setchanges__([])
+                self._loaddict(json)
+                success = True
+        return success
+
+    def refresh(self, force=False):
+        """
+        Reloads the model with remote information
+        """
+        success = False
+        if self.is_dirty and not force:
+            # We have local non-committed changes - rejecting the refresh
+            success = False
+        elif not self._detail_uri:
+            raise Exception("Object does not exist in Tutum")
+        else:
+            json = send_request("GET", self._detail_uri)
+            if json:
+                self._loaddict(json)
                 success = True
         return success
 
@@ -133,22 +155,19 @@ class RESTModel(object):
         Deletes the model in Tutum
         """
         success = False
-        cls = self.__class__
-        endpoint = getattr(cls, 'endpoint', None)
-        if not endpoint:
-            raise Exception("Endpoint not specified for %s" % cls.__name__)
         if not self._detail_uri:
             raise Exception("Object does not exist in Tutum")
-        action  = "DELETE"
-        url     = self._detail_uri
+        action = "DELETE"
+        url = self._detail_uri
         json = send_request(action, url)
         if json:
-            for k, v in json.items():
-                setattr(self, k, v)
-            self.__setchanges__([])
+            self._loaddict(json)
             success = True
         return success
 
     @classmethod
     def create(cls, **kwargs):
+        """
+        Returns a new instance of the model (without saving it)
+        """
         return cls(**kwargs)
