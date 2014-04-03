@@ -1,5 +1,4 @@
 import json as json_parser
-from urlparse import urljoin
 
 from http import send_request
 from tutum.api.exceptions import TutumApiError
@@ -69,7 +68,7 @@ class RESTModel(object):
         """
         containers = []
         endpoint = getattr(cls, 'endpoint', None)
-        assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
+        assert endpoint, "Endpoint not specified for %s" % cls.__name__
         json = send_request('GET', endpoint)
         if json:
             json_objects = json.get('objects', [])
@@ -86,7 +85,7 @@ class RESTModel(object):
         """
         instance = None
         endpoint = getattr(cls, 'endpoint', None)
-        assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
+        assert endpoint, "Endpoint not specified for %s" % cls.__name__
         detail_uri = "/".join([endpoint, pk])
         json = send_request('GET', detail_uri)
         if json:
