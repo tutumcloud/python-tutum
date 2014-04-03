@@ -194,3 +194,12 @@ class RESTModel(object):
         Returns a new instance of the model (without saving it)
         """
         return cls(**kwargs)
+
+    def get_all_attributes(self):
+        """
+        Returns a dict with all object attributes
+        """
+        attributes = {}
+        for attr in [attr for attr in vars(self) if not attr.startswith('_')]:
+            attributes[attr] = getattr(self, attr, None)
+        return attributes
