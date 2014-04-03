@@ -64,7 +64,7 @@ Applications
     <tutum.api.application.Application object at 0x106c45c10>
     >>> app.name
     "my-python-app"
-    >>> app = tutum.Application.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2, container_size="XS")
+    >>> app = tutum.Application.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2)
     >>> app.save()
     True
     >>> app.target_num_containers = 3
@@ -96,7 +96,7 @@ Containers
     >>> container.start()
     True
     >>> container.logs
-    "2014-03-24 23:58:08,973 CRIT Supervisor running as root (no user in config file)\n2014-03-24 23:58:08,973 WARN Included extra file \"/etc/supervisor/conf.d/supervisord-apache2.conf\" during parsing"
+    "2014-03-24 23:58:08,973 CRIT Supervisor running as root (no user in config file) [...]"
     >>> container.delete()
     True
 
