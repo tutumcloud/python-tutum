@@ -1,3 +1,5 @@
+import ConfigParser
+import os
 from requests.auth import HTTPBasicAuth
 
 import tutum
@@ -44,3 +46,16 @@ def logout():
     """
     tutum.user = None
     tutum.apikey = None
+
+
+def load_from_file(file="~/.tutum"):
+    """
+    Attempts to read tutum's credentials from a config file and return a tuple of (user,apikey)
+    """
+    try:
+        cfgfile = os.path.expanduser(file)
+        cp = ConfigParser.ConfigParser()
+        cp.read(cfgfile)
+        return (cp.get("auth", "user"), cp.get("auth", "apikey"))
+    except ConfigParser.Error:
+        return (None, None)
