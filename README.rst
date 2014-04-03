@@ -5,7 +5,7 @@ Python library for Tutum's API. Full documentation available at `http://docs.tut
 
 
 Installing the library
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 In order to install the Tutum Python library, you can use ``pip install``:
 
