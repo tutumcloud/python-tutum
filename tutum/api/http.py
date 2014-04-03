@@ -4,7 +4,7 @@ from urlparse import urljoin
 from requests import Request, Session
 
 import tutum
-from tutum.api.exceptions import TutumApiError
+from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
 def send_request(method, path, **kwargs):
@@ -38,7 +38,10 @@ def send_request(method, path, **kwargs):
             logging.error("Response: %s", response.text)
             raise TutumApiError("JSON Parse Error (%s %s)" % (method, url))
     else:
-         # Server returned an error.
-        logging.error("Response: %s", response.text)
-        raise TutumApiError("Status %s (%s %s)" % (str(status_code), method, url))
+        # Server returned an error.
+        if status_code == 401:
+            raise TutumAuthError("Not authorized")
+        else:
+            logging.error("Response: %s", response.text)
+            raise TutumApiError("Status %s (%s %s)" % (str(status_code), method, url))
     return json
