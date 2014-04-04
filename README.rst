@@ -100,14 +100,3 @@ Containers
     >>> container.delete()
     True
 
-
-Roles
-^^^^^
-
-.. sourcecode:: python
-
-    >>> import tutum
-    >>> tutum.Role.list()
-    [<tutum.api.role.Role object at 0x10701ca90>]
-    >>> tutum.Role.fetch("global")
-    <tutum.api.role.Role object at 0x10701ca90>
