@@ -4,7 +4,6 @@ from tutum.api import auth
 from tutum.api.application import Application
 from tutum.api.container import Container
 from tutum.api.registry import Registry
-from tutum.api.role import Role
 from tutum.api.image import Image
 
 
