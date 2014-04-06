@@ -62,14 +62,14 @@ class RESTModel(object):
         return len(self.__getchanges__()) > 0
 
     @classmethod
-    def list(cls):
+    def list(cls, **kwargs):
         """
-        List all models for the authenticated user.
+        List all models for the authenticated user, optionally filtered
         """
         containers = []
         endpoint = getattr(cls, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % cls.__name__
-        json = send_request('GET', endpoint)
+        json = send_request('GET', endpoint, params=kwargs)
         if json:
             json_objects = json.get('objects', [])
             for json_obj in json_objects:
