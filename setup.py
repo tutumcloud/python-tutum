@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "python-tutum",
-    version = "0.6.3.5",
+    version = "0.6.4",
     packages = find_packages(),
     install_requires = ['requests>=2.2.1'],
     author = "Tutum, Inc.",
