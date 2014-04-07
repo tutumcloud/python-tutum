@@ -8,16 +8,12 @@ class RESTModel(object):
     _detail_uri = None
 
     def __init__(self, **kwargs):
-        """
-        Simply reflect all the values in kwargs.
-        """
+        """Simply reflect all the values in kwargs"""
         for k, v in kwargs.items():
             setattr(self, k, v)
 
     def __setattr__(self, name, value):
-        """
-        Keep track of what attributes have been set.
-        """
+        """Keeps track of what attributes have been set"""
         current_value = getattr(self, name, None)
         if value != current_value:
             changed_attrs = self.__getchanges__()
@@ -27,22 +23,16 @@ class RESTModel(object):
         super(RESTModel, self).__setattr__(name, value)
 
     def __getchanges__(self):
-        """
-        Internal. Convenience method to get the changed attrs list.
-        """
+        """Internal. Convenience method to get the changed attrs list"""
         return getattr(self, '__changedattrs__', [])
 
     def __setchanges__(self, val):
-        """
-        Internal. Convenience method to set the changed attrs list.
-        """
+        """Internal. Convenience method to set the changed attrs list"""
         # Use the super implementation to prevent infinite recursion
         super(RESTModel, self).__setattr__('__changedattrs__', val)
 
     def _loaddict(self, dict):
-        """
-        Internal. Sets the model attributes to the dictionary values passed
-        """
+        """Internal. Sets the model attributes to the dictionary values passed"""
         endpoint = getattr(self, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
         for k, v in dict.items():
@@ -52,19 +42,25 @@ class RESTModel(object):
 
     @property
     def pk(self):
+        """Returns the primary key for the object. Can be overridden by subclasses.
+
+        :returns: str -- the primary key for the object
+        """
         return getattr(self, 'uuid', None)
 
     @property
     def is_dirty(self):
-        """
-        Returns whether or not the model has unsaved changes.
+        """Returns whether or not the object has unsaved changes
+
+        :returns: bool -- whether or not the object has unsaved changes
         """
         return len(self.__getchanges__()) > 0
 
     @classmethod
     def list(cls, **kwargs):
-        """
-        List all models for the authenticated user, optionally filtered
+        """List all objects for the authenticated user, optionally filtered by ``kwargs``
+
+        :returns: list -- a list of objects that match the query
         """
         containers = []
         endpoint = getattr(cls, 'endpoint', None)
@@ -80,8 +76,12 @@ class RESTModel(object):
 
     @classmethod
     def fetch(cls, pk):
-        """
-        Fetch an individual model given the pk.
+        """Fetch an individual model given the pk
+
+        :param pk: The primary key for the object (usually UUID)
+        :type pk: str
+        :returns: RESTModel -- the instance fetched from Tutum
+        :raises: TutumApiError
         """
         instance = None
         endpoint = getattr(cls, 'endpoint', None)
@@ -94,8 +94,9 @@ class RESTModel(object):
         return instance
 
     def save(self):
-        """
-        Create or update the model in Tutum
+        """Create or update the model in Tutum
+
+        :returns: bool -- whether the operation was successful or not
         """
         success = False
         if not self.is_dirty:
@@ -131,8 +132,11 @@ class RESTModel(object):
         return success
 
     def refresh(self, force=False):
-        """
-        Reloads the model with remote information
+        """Reloads the object with remote information
+
+        :param force: Force reloading even if there are pending changes
+        :type force: bool
+        :returns: bool -- whether the operation was successful or not
         """
         success = False
         if self.is_dirty and not force:
@@ -148,8 +152,9 @@ class RESTModel(object):
         return success
 
     def delete(self):
-        """
-        Deletes the model in Tutum
+        """Deletes the object in Tutum
+
+        :returns: bool -- whether the operation was successful or not
         """
         success = False
         if not self._detail_uri:
@@ -163,9 +168,7 @@ class RESTModel(object):
         return success
 
     def _perform_action(self, action):
-        """
-        Internal. Performs the specified action on the object remotely
-        """
+        """Internal. Performs the specified action on the object remotely"""
         success = False
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
@@ -177,9 +180,7 @@ class RESTModel(object):
         return success
 
     def _expand_attribute(self, attribute):
-        """
-        Internal. Expands the given attribute from remote information
-        """
+        """Internal. Expands the given attribute from remote information"""
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         url = "/".join([self._detail_uri, attribute])
@@ -190,14 +191,16 @@ class RESTModel(object):
 
     @classmethod
     def create(cls, **kwargs):
-        """
-        Returns a new instance of the model (without saving it)
+        """Returns a new instance of the model (without saving it) with the attributes specified in ``kwargs``
+
+        :returns: RESTModel -- a new local instance of the model
         """
         return cls(**kwargs)
 
     def get_all_attributes(self):
-        """
-        Returns a dict with all object attributes
+        """Returns a dict with all object attributes
+
+        :returns: dict -- all object attributes as a dict
         """
         attributes = {}
         for attr in [attr for attr in vars(self) if not attr.startswith('_')]:
