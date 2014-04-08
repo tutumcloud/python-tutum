@@ -42,11 +42,19 @@ class RESTModel(object):
 
     @property
     def pk(self):
-        """Returns the primary key for the object. Can be overridden by subclasses.
+        """Returns the primary key for the object.
 
         :returns: str -- the primary key for the object
         """
-        return getattr(self, 'uuid', None)
+        return getattr(self, self._pk_key(), None)
+
+    @classmethod
+    def _pk_key(cls):
+        """Internal. Returns the attribute name that acts as primary key of the model. Can be overridden by subclasses.
+
+        :returns: str -- the name of the primary key attribute for the model
+        """
+        return 'uuid'
 
     @property
     def is_dirty(self):
@@ -156,7 +164,6 @@ class RESTModel(object):
 
         :returns: bool -- whether the operation was successful or not
         """
-        success = False
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         action = "DELETE"
@@ -164,8 +171,12 @@ class RESTModel(object):
         json = send_request(action, url)
         if json:
             self._loaddict(json)
-            success = True
-        return success
+        else:
+            # Object deleted successfully and nothing came back - deleting PK reference.
+            self._detail_uri = None
+            setattr(self, self._pk_key(), None)
+            self.__setchanges__([])
+        return True
 
     def _perform_action(self, action):
         """Internal. Performs the specified action on the object remotely"""

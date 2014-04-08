@@ -13,9 +13,7 @@ def send_request(method, path, **kwargs):
         url = "%s/" % url
     tutum.logger.info("%s %s %s" % (method, url, kwargs))
     # construct headers
-    headers = {}
-    headers['Content-Type']  = 'application/json'
-    headers['User-Agent']    = 'python-tutum/v1.0'
+    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v1.0'}
     if tutum.user and tutum.apikey:
         headers['Authorization'] = 'ApiKey %s:%s' % (tutum.user, tutum.apikey)
     # construct request
@@ -29,13 +27,17 @@ def send_request(method, path, **kwargs):
     if not status_code:
         # Most likely network trouble
         raise TutumApiError("No Response (%s %s)" % (method, url))
-    elif status_code >= 200 and status_code <= 299:
-        # Success. Try to parse the response.
-        try:
-            json = response.json()
-        except Exception as e:
-            tutum.logger.error("Response: %s", response.text)
-            raise TutumApiError("JSON Parse Error (%s %s)" % (method, url))
+    elif 200 <= status_code <= 299:
+        # Success
+        if status_code != 204:
+            # Try to parse the response.
+            try:
+                json = response.json()
+            except Exception as e:
+                tutum.logger.error("Response: %s", response.text)
+                raise TutumApiError("JSON Parse Error (%s %s)" % (method, url))
+        else:
+            json = None
     else:
         # Server returned an error.
         if status_code == 401:

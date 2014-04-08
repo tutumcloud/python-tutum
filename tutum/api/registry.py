@@ -6,6 +6,6 @@ class Registry(RESTModel):
 
     endpoint = "/registry"
 
-    @property
-    def pk(self):
-        return getattr(self, 'host', None)
+    @classmethod
+    def _pk_key(cls):
+        return 'host'

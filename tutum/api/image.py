@@ -6,6 +6,6 @@ class Image(RESTModel):
 
     endpoint = "/image"
 
-    @property
-    def pk(self):
-        return getattr(self, 'name', None)
+    @classmethod
+    def _pk_key(cls):
+        return 'name'
