@@ -33,9 +33,8 @@ def send_request(method, path, **kwargs):
             # Try to parse the response.
             try:
                 json = response.json()
-            except Exception as e:
-                tutum.logger.error("Response: %s", response.text)
-                raise TutumApiError("JSON Parse Error (%s %s)" % (method, url))
+            except Exception:
+                raise TutumApiError("JSON Parse Error (%s %s). Response: %s" % (method, url, response.text))
         else:
             json = None
     else:
@@ -43,6 +42,5 @@ def send_request(method, path, **kwargs):
         if status_code == 401:
             raise TutumAuthError("Not authorized")
         else:
-            tutum.logger.error("Response: %s", response.text)
-            raise TutumApiError("Status %s (%s %s)" % (str(status_code), method, url))
+            raise TutumApiError("Status %s (%s %s). Response: %s" % (str(status_code), method, url, response.text))
     return json
