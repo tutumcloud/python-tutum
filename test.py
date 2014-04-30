@@ -1,6 +1,7 @@
-from tutum.api.auth import authenticate, is_authenticated
+from tutum.api.auth import is_authenticated
 from tutum.api.container import Container
 from tutum.api.application import Application
+
 
 def main():
     if is_authenticated():

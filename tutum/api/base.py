@@ -178,13 +178,13 @@ class RESTModel(object):
             self.__setchanges__([])
         return True
 
-    def _perform_action(self, action):
+    def _perform_action(self, action, data=None):
         """Internal. Performs the specified action on the object remotely"""
         success = False
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         url = "/".join([self._detail_uri, action])
-        json = send_request("POST", url)
+        json = send_request("POST", url, data=data)
         if json:
             self._loaddict(json)
             success = True
