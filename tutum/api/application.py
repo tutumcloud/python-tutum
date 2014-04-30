@@ -1,5 +1,5 @@
 from base import RESTModel
-
+import json
 
 class Application(RESTModel):
     """Represents a Tutum Application object"""
@@ -28,7 +28,7 @@ class Application(RESTModel):
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
-        return self._perform_action("redeploy", data={"tag": tag})
+        return self._perform_action("redeploy", data=json.dumps({"tag": tag}))
 
     @property
     def logs(self):
