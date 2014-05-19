@@ -7,6 +7,7 @@ from tutum.api.registry import Registry
 from tutum.api.image import Image
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
+__version__ = '0.6.7'
 
 #: The username used to authenticate with the API
 user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)
