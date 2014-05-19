@@ -5,6 +5,7 @@ from tutum.api.application import Application
 from tutum.api.container import Container
 from tutum.api.registry import Registry
 from tutum.api.image import Image
+from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
 #: The username used to authenticate with the API

@@ -15,30 +15,33 @@ def authenticate(username, password):
     :type password: str.
     :raises: TutumAuthError
     """
-    apikey = get_apikey(username, password)
+    user, apikey = get_auth(username, password)
+    if user:
+        tutum.user = user
     if apikey:
-        tutum.user = username
         tutum.apikey = apikey
 
 
-def get_apikey(username, password):
-    """Returns the user's ApiKey, or raises an exception if username/password incorrect
+def get_auth(username, password):
+    """Returns the user's Username and ApiKey, or raises an exception if username/password incorrect
 
-    :param username: The username of the user to authenticate
+    :param username: The username/email of the user to authenticate
     :type username: str
     :param password: The password of the user to authenticate
     :type password: str
     :raises: TutumAuthError
-    :returns: str -- the ApiKey to use for the given username
+    :returns: str, str -- the Username, ApiKey to use for the given username/email
     """
     auth = HTTPBasicAuth(username, password)
     json = send_request("GET", "/auth", auth=auth)
+    user = username
     apikey = None
     if json:
         objects = json.get('objects', None)
         if objects and len(objects) > 0:
+            user = objects[0].get('username',username)
             apikey = objects[0].get('key')
-    return apikey
+    return user, apikey
 
 
 def is_authenticated():
