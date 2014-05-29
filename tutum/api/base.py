@@ -1,7 +1,7 @@
 import json as json_parser
 
 from http import send_request
-from tutum.api.exceptions import TutumApiError
+from exceptions import TutumApiError
 
 
 class RESTModel(object):

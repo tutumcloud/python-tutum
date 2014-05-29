@@ -72,3 +72,10 @@ def load_from_file(file="~/.tutum"):
         return (cp.get("auth", "user"), cp.get("auth", "apikey"))
     except ConfigParser.Error:
         return (None, None)
+
+
+def get_auth_header():
+    if tutum.user and tutum.apikey:
+        return {'Authorization': 'ApiKey %s:%s' % (tutum.user, tutum.apikey)}
+    else:
+        return {}
