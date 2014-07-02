@@ -1,7 +1,9 @@
-from base import RESTModel
 import json
 
-class Application(RESTModel):
+from base import RESTModel
+
+
+class Cluster(RESTModel):
     """Represents a Tutum Application object"""
 
     endpoint = "/application"

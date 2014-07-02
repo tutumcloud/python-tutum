@@ -1,5 +1,6 @@
 import ConfigParser
 import os
+
 from requests.auth import HTTPBasicAuth
 
 import tutum
@@ -39,7 +40,7 @@ def get_auth(username, password):
     if json:
         objects = json.get('objects', None)
         if objects and len(objects) > 0:
-            user = objects[0].get('username',username)
+            user = objects[0].get('username', username)
             apikey = objects[0].get('key')
     return user, apikey
 

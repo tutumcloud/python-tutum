@@ -5,6 +5,7 @@ from requests import Request, Session
 import tutum
 from exceptions import TutumApiError, TutumAuthError
 
+
 def send_request(method, path, **kwargs):
     json = None
     url = urljoin(tutum.base_url, path.strip("/"))

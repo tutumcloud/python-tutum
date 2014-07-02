@@ -19,22 +19,22 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError('Unable to find version string.')
 
+
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
-
 setup(
-    name = "python-tutum",
-    version = find_version('tutum', '__init__.py'),
-    packages = find_packages(),
-    install_requires = install_requires,
-    provides = ['tutum'],
+    name="python-tutum",
+    version=find_version('tutum', '__init__.py'),
+    packages=find_packages(),
+    install_requires=install_requires,
+    provides=['tutum'],
     include_package_data=True,
-    author = "Tutum, Inc.",
-    author_email = "info@tutum.co",
-    description = "Python Library for Tutum",
-    license = "Apache v2",
-    keywords = "tutum docker",
-    url = "http://www.tutum.co/",
+    author="Tutum, Inc.",
+    author_email="info@tutum.co",
+    description="Python Library for Tutum",
+    license="Apache v2",
+    keywords="tutum docker",
+    url="http://www.tutum.co/",
     test_suite="tests",
 )

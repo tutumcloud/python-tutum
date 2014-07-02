@@ -1,11 +1,13 @@
 import logging
 import os
+
 from tutum.api import auth
-from tutum.api.application import Application
+from tutum.api.cluster import Cluster
 from tutum.api.container import Container
 from tutum.api.registry import Registry
 from tutum.api.image import Image
 from tutum.api.exceptions import TutumApiError, TutumAuthError
+
 
 __version__ = '0.7.3'
 
