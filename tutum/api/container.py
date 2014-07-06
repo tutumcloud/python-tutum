@@ -1,3 +1,4 @@
+import json
 from base import RESTModel
 
 
@@ -21,6 +22,14 @@ class Container(RESTModel):
         :raises: TutumApiError
         """
         return self._perform_action("stop")
+
+    def redeploy(self, tag=None):
+        """Redeploy the container in Tutum.
+
+        :returns: bool -- whether or not the operation succeeded
+        :raises: TutumApiError
+        """
+        return self._perform_action("redeploy", data=json.dumps({"tag": tag}))
 
     @property
     def logs(self):

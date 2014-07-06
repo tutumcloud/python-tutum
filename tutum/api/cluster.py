@@ -4,12 +4,12 @@ from base import RESTModel
 
 
 class Cluster(RESTModel):
-    """Represents a Tutum Application object"""
+    """Represents a Tutum Cluster object"""
 
     endpoint = "/application"
 
     def start(self):
-        """Starts the application in Tutum.
+        """Starts the cluster in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -17,7 +17,7 @@ class Cluster(RESTModel):
         return self._perform_action("start")
 
     def stop(self):
-        """Stops the application in Tutum.
+        """Stops the cluster in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -25,7 +25,7 @@ class Cluster(RESTModel):
         return self._perform_action("stop")
 
     def redeploy(self, tag=None):
-        """Redeploy the application in Tutum.
+        """Redeploy the cluster in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -34,9 +34,9 @@ class Cluster(RESTModel):
 
     @property
     def logs(self):
-        """Fetches and returns the logs for the application from Tutum
+        """Fetches and returns the logs for the cluster from Tutum
 
-        :returns: string -- the current logs of the application
+        :returns: string -- the current logs of the cluster
         :raises: TutumApiError
         """
         return self._expand_attribute("logs")
