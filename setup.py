@@ -36,4 +36,5 @@ setup(
     license = "Apache v2",
     keywords = "tutum docker",
     url = "http://www.tutum.co/",
+    test_suite="tests",
 )
