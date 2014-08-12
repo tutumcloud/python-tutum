@@ -6,7 +6,7 @@ from base import RESTModel
 class Cluster(RESTModel):
     """Represents a Tutum Cluster object"""
 
-    endpoint = "/application"
+    endpoint = "/cluster"
 
     def start(self):
         """Starts the cluster in Tutum.

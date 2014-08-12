@@ -60,19 +60,19 @@ which should be handled by the calling application accordingly.
 Quick examples
 --------------
 
-Applications
+Clusters
 ^^^^^^^^^^^^
 
 .. sourcecode:: python
 
     >>> import tutum
-    >>> tutum.Application.list()
-    [<tutum.api.application.Application object at 0x10701ca90>, <tutum.api.application.Application object at 0x10701ca91>]
-    >>> tutum.Application.fetch("fee900c6-97da-46b3-a21c-e2b50ed07015")
-    <tutum.api.application.Application object at 0x106c45c10>
+    >>> tutum.Cluster.list()
+    [<tutum.api.cluster.Cluster object at 0x10701ca90>, <tutum.api.cluster.Cluster object at 0x10701ca91>]
+    >>> tutum.Cluster.fetch("fee900c6-97da-46b3-a21c-e2b50ed07015")
+    <tutum.api.cluster.Cluster object at 0x106c45c10>
     >>> app.name
     "my-python-app"
-    >>> app = tutum.Application.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2)
+    >>> app = tutum.Cluster.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2)
     >>> app.save()
     True
     >>> app.target_num_containers = 3
