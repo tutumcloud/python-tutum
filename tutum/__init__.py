@@ -6,6 +6,7 @@ from tutum.api.cluster import Cluster
 from tutum.api.container import Container
 from tutum.api.registry import Registry
 from tutum.api.image import Image
+from tutum.api.node import Node
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
