@@ -7,6 +7,11 @@ from tutum.api.container import Container
 from tutum.api.registry import Registry
 from tutum.api.image import Image
 from tutum.api.node import Node
+from tutum.api.nodecluster import NodeCluster
+from tutum.api.nodetype import NodeType
+from tutum.api.provider import Provider
+from tutum.api.region import Region
+from tutum.api.availabilityzones import AZ
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
