@@ -15,7 +15,7 @@ from tutum.api.availabilityzones import AZ
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
-__version__ = '0.8.0'
+__version__ = '0.8.0pre'
 
 #: The username used to authenticate with the API
 user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)
