@@ -9,9 +9,8 @@ from tutum.api.image import Image
 from tutum.api.node import Node
 from tutum.api.nodecluster import NodeCluster
 from tutum.api.nodetype import NodeType
-from tutum.api.provider import Provider
-from tutum.api.region import Region
-from tutum.api.availabilityzones import AZ
+from tutum.api.nodeprovider import Provider
+from tutum.api.noderegion import Region
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
