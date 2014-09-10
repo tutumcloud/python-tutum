@@ -8,4 +8,4 @@ class Region(RESTModel):
 
     @classmethod
     def _pk_key(cls):
-        return 'resource_uri'
+        return 'name'
