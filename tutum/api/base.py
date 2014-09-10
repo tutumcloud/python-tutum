@@ -70,7 +70,7 @@ class RESTModel(object):
 
         :returns: list -- a list of objects that match the query
         """
-        containers = []
+        objects = []
         endpoint = getattr(cls, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % cls.__name__
         json = send_request('GET', endpoint, params=kwargs)
@@ -79,8 +79,9 @@ class RESTModel(object):
             for json_obj in json_objects:
                 instance = cls()
                 instance._loaddict(json_obj)
-                containers.append(instance)
-        return containers
+                objects.append(instance)
+        return objects
+
 
     @classmethod
     def fetch(cls, pk):
