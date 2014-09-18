@@ -2,7 +2,7 @@ import logging
 import os
 
 from tutum.api import auth
-from tutum.api.cluster import Cluster
+from tutum.api.service import Service
 from tutum.api.container import Container
 from tutum.api.registry import Registry
 from tutum.api.image import Image

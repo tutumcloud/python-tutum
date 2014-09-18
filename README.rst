@@ -60,29 +60,29 @@ which should be handled by the calling application accordingly.
 Quick examples
 --------------
 
-Clusters
+Services
 ^^^^^^^^^^^^
 
 .. sourcecode:: python
 
     >>> import tutum
-    >>> tutum.Cluster.list()
-    [<tutum.api.cluster.Cluster object at 0x10701ca90>, <tutum.api.cluster.Cluster object at 0x10701ca91>]
-    >>> tutum.Cluster.fetch("fee900c6-97da-46b3-a21c-e2b50ed07015")
-    <tutum.api.cluster.Cluster object at 0x106c45c10>
-    >>> app.name
+    >>> tutum.Service.list()
+    [<tutum.api.service.Service object at 0x10701ca90>, <tutum.api.service.Service object at 0x10701ca91>]
+    >>> service = tutum.Service.fetch("fee900c6-97da-46b3-a21c-e2b50ed07015")
+    <tutum.api.service.Service object at 0x106c45c10>
+    >>> service.name
     "my-python-app"
-    >>> app = tutum.Cluster.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2)
-    >>> app.save()
+    >>> service = tutum.Service.create(image="tutum/hello-world", name="my-new-app", target_num_containers=2)
+    >>> service.save()
     True
-    >>> app.target_num_containers = 3
-    >>> app.save()
+    >>> service.target_num_containers = 3
+    >>> service.save()
     True
-    >>> app.stop()
+    >>> service.stop()
     True
-    >>> app.start()
+    >>> service.start()
     True
-    >>> app.delete()
+    >>> service.delete()
     True
 
 
@@ -94,7 +94,7 @@ Containers
     >>> import tutum
     >>> tutum.Container.list()
     [<tutum.api.container.Container object at 0x10701ca90>, <tutum.api.container.Container object at 0x10701ca91>]
-    >>> tutum.Container.fetch("7d6696b7-fbaf-471d-8e6b-ce7052586c24")
+    >>> container = tutum.Container.fetch("7d6696b7-fbaf-471d-8e6b-ce7052586c24")
     <tutum.api.container.Container object at 0x10701ca90>
     >>> container.web_public_dns = "my-web-app.example.com"
     >>> container.save()
