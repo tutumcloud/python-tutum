@@ -46,7 +46,10 @@ class RESTModel(object):
 
         :returns: str -- the primary key for the object
         """
-        return getattr(self, self._pk_key(), None)
+        if hasattr(self, '_pk_key'):
+            return self._pk_key()
+        else:
+            return None
 
     @classmethod
     def _pk_key(cls):
@@ -175,7 +178,7 @@ class RESTModel(object):
         else:
             # Object deleted successfully and nothing came back - deleting PK reference.
             self._detail_uri = None
-            setattr(self, self._pk_key(), None)
+            # setattr(self, self._pk_key(), None) -- doesn't work
             self.__setchanges__([])
         return True
 
