@@ -210,7 +210,7 @@ class BaseTestCase(unittest.TestCase):
     def test_base_create(self):
         self.assertIsInstance(RESTModel.create(), RESTModel)
 
-    def test_get_all_attributes(self):
+    def test_base_get_all_attributes(self):
         model = RESTModel()
         model.key = 'value'
         self.assertDictEqual({'key': 'value'}, model.get_all_attributes())
