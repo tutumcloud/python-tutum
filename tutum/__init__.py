@@ -4,7 +4,6 @@ import os
 from tutum.api import auth
 from tutum.api.service import Service
 from tutum.api.container import Container
-from tutum.api.registry import Registry
 from tutum.api.image import Image
 from tutum.api.node import Node
 from tutum.api.nodecluster import NodeCluster
