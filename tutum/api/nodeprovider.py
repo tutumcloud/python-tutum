@@ -9,3 +9,9 @@ class Provider(RESTModel):
     @classmethod
     def _pk_key(cls):
         return 'name'
+
+    def delete(self):
+        raise AttributeError("'delete' is not supported in 'Provider'")
+
+    def save(self):
+        raise AttributeError("'save' is not supported in 'Provider'")
