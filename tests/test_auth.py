@@ -31,7 +31,7 @@ class AuthTestCase(unittest.TestCase):
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_auth_get_auth(self, mock_send):
-        mock_send.return_value = fake_resp(get_fake_auth)
+        mock_send.return_value = fake_resp(fake_auth)
         user, apikey = tutum.auth.get_auth(FAKE_USER, FAKE_PASSWORD)
         self.assertEqual(FAKE_USER, user)
         self.assertEqual(FAKE_APIKEY, apikey)
