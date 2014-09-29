@@ -2,7 +2,7 @@ from base import RESTModel
 
 
 class Provider(RESTModel):
-    """Represents a Tutum nodecluster object"""
+    """Represents a Tutum Provider object"""
 
     endpoint = "/provider"
 

@@ -2,7 +2,7 @@ from base import RESTModel
 
 
 class Region(RESTModel):
-    """Represents a Tutum region object"""
+    """Represents a Tutum Region object"""
 
     endpoint = "/region"
 

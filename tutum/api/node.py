@@ -2,6 +2,6 @@ from base import RESTModel
 
 
 class Node(RESTModel):
-    """Represents a Tutum node object"""
+    """Represents a Tutum Node object"""
 
     endpoint = "/node"
