@@ -160,3 +160,27 @@ def fake_node_deploy():
     status_code = 202
     resp = '{"actions": ["/api/v1/action/8f5b893b-826e-40b7-bb8b-2d96301425f2/", "/api/v1/action/83c66611-ea5d-45d7-a97d-914029a90524/"], "deployed_datetime": "Mon, 29 Sep 2014 22:59:47 +0000", "destroyed_datetime": null, "docker_execdriver": "native-0.2", "docker_graphdriver": "aufs", "docker_version": "1.2.0", "external_fqdn": "43b5ebaf-tifayuki.node.tutum.io", "last_seen": "Tue, 30 Sep 2014 15:38:12 +0000", "node_cluster": "/api/v1/nodecluster/b616a720-6684-42c6-83bb-4d298b11b3f3/", "node_type": "/api/v1/nodetype/digitalocean/512mb/", "public_ip": "178.62.20.100", "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/node/43b5ebaf-5b9c-4ed3-a1e5-3d91cea70456/", "state": "Starting", "uuid": "43b5ebaf-5b9c-4ed3-a1e5-3d91cea70456"}'
     return status_code, json.loads(resp)
+
+
+def fake_image_list():
+    status_code = 200
+    resp = '{"meta": {"limit": 25, "next": null, "offset": 0, "previous": null, "total_count": 1}, "objects": [{"base_image": false, "categories": [], "cluster_aware": true, "description": "", "docker_registry": "/api/v1/registry/tutum.co/", "image_url": "", "imagetag_set": ["/api/v1/image/tutum.co/tifayuki/mongodb/tag/latest/"], "is_private_image": true, "name": "tutum.co/tifayuki/mongodb", "public_url": "", "resource_uri": "/api/v1/image/tutum.co/tifayuki/mongodb/", "starred": false}]}'
+    return status_code, json.loads(resp)
+
+
+def fake_image_fetch():
+    status_code = 200
+    resp = '{"base_image": false, "categories": [], "cluster_aware": true, "description": "", "docker_registry": {"created": true, "host": "registry.hub.docker.com", "id": 5, "image_url": "/_static/assets/images/dockerregistries/docker.png", "is_ssl": true, "is_tutum_registry": false, "modified": true, "name": "Docker.io", "resource_uri": "/api/v1/registry/registry.hub.docker.com/", "uuid": "d533039e-c44c-4cdc-951b-e0e03b8410c6"}, "image_url": "", "imagetag_set": [{"full_name": "tifayuki/cadvisor:latest", "image": {"author": "Feng Hoonglin <hfeng@tutum.co>", "docker_id": "9e2907ef52bf811b4da100f50ba8f0908ccc610c7054bd69087f0a9f4703efdd", "entrypoint": "", "image_creation": "Fri, 15 Aug 2014 15:19:04 +0000", "imageenvvar_set": [{"key": "CADVISOR_TAG", "value": "0.2.2"}, {"key": "DB_NAME", "value": "cadvisor"}, {"key": "DB_PASS", "value": "root"}, {"key": "DB_USER", "value": "root"}, {"key": "HOME", "value": "/"}, {"key": "PATH", "value": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}], "imageport_set": [], "run_command": "/run.sh"}, "image_info": "/api/v1/image/tifayuki/cadvisor/", "name": "latest", "resource_uri": "/api/v1/image/tifayuki/cadvisor/tag/latest/"}], "is_private_image": true, "name": "tifayuki/cadvisor", "public_url": "https://registry.hub.docker.com/u/tifayuki/cadvisor/", "resource_uri": "/api/v1/image/tifayuki/cadvisor/", "starred": false}'
+    return status_code, json.loads(resp)
+
+
+def fake_image_save():
+    status_code = 202
+    resp = '{"base_image": false, "categories": [], "cluster_aware": true, "description": "description", "docker_registry": {"created": true, "host": "registry.hub.docker.com", "id": 5, "image_url": "/_static/assets/images/dockerregistries/docker.png", "is_ssl": true, "is_tutum_registry": false, "modified": true, "name": "Docker.io", "resource_uri": "/api/v1/registry/registry.hub.docker.com/", "uuid": "d533039e-c44c-4cdc-951b-e0e03b8410c6"}, "image_url": "", "imagetag_set": [{"full_name": "tifayuki/cadvisor:latest", "image": {"author": "Feng Hoonglin <hfeng@tutum.co>", "docker_id": "9e2907ef52bf811b4da100f50ba8f0908ccc610c7054bd69087f0a9f4703efdd", "entrypoint": "", "image_creation": "Fri, 15 Aug 2014 15:19:04 +0000", "imageenvvar_set": [{"key": "CADVISOR_TAG", "value": "0.2.2"}, {"key": "DB_NAME", "value": "cadvisor"}, {"key": "DB_PASS", "value": "root"}, {"key": "DB_USER", "value": "root"}, {"key": "HOME", "value": "/"}, {"key": "PATH", "value": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"}], "imageport_set": [], "run_command": "/run.sh"}, "image_info": "/api/v1/image/tifayuki/cadvisor/", "name": "latest", "resource_uri": "/api/v1/image/tifayuki/cadvisor/tag/latest/"}], "is_private_image": true, "name": "tifayuki/cadvisor", "public_url": "https://registry.hub.docker.com/u/tifayuki/cadvisor/", "resource_uri": "/api/v1/image/tifayuki/cadvisor/", "starred": false}'
+    return status_code, json.loads(resp)
+
+
+def fake_image_delete():
+    status_code = 204
+    resp = ''
+    return status_code, resp
