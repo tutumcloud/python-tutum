@@ -95,3 +95,30 @@ def fake_nodetype_fetch():
     status_code = 200
     resp = '{"availability_zones": [], "available": true, "label": "8GB", "name": "8gb", "provider": "/api/v1/provider/digitalocean/", "regions": ["/api/v1/region/digitalocean/nyc1/", "/api/v1/region/digitalocean/ams1/", "/api/v1/region/digitalocean/sfo1/", "/api/v1/region/digitalocean/nyc2/", "/api/v1/region/digitalocean/ams2/", "/api/v1/region/digitalocean/sgp1/", "/api/v1/region/digitalocean/lon1/", "/api/v1/region/digitalocean/nyc3/", "/api/v1/region/digitalocean/ams3/"], "resource_uri": "/api/v1/nodetype/digitalocean/8gb/"}'
     return status_code, json.loads(resp)
+
+def fake_nodeclster_list():
+    status_code = 200
+    resp = '{"meta": {"limit": 25, "next": null, "offset": 0, "previous": null, "total_count": 2}, ' \
+           '"objects": [{"current_num_nodes": 1, "deployed_datetime": "Mon, 29 Sep 2014 22:29:03 +0000", "destroyed_datetime": null, "name": "test", "node_type": "/api/v1/nodetype/digitalocean/512mb/", "region": "/api/v1/region/digitalocean/sfo1/", "resource_uri": "/api/v1/nodecluster/a02c3763-e639-46fc-a6db-587f4dbb5444/", "state": "Deployed", "target_num_nodes": 1, "uuid": "a02c3763-e639-46fc-a6db-587f4dbb5444"}, ' \
+           '{"current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "test2", "node_type": "/api/v1/nodetype/digitalocean/512mb/", "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/b616a720-6684-42c6-83bb-4d298b11b3f3/", "state": "Deploying", "target_num_nodes": 1, "uuid": "b616a720-6684-42c6-83bb-4d298b11b3f3"}]}'
+    return status_code, json.loads(resp)
+
+def fake_nodecluster_fetch():
+    status_code = 200
+    resp = '{"actions": ["/api/v1/action/bf02b00a-e2fc-4098-8b69-1424b659ef4a/", "/api/v1/action/f8dce6d4-5c41-46a9-9754-baa8f3cdf031/"], "current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "test2", "node_type": "/api/v1/nodetype/digitalocean/512mb/", "nodes": ["/api/v1/node/43b5ebaf-5b9c-4ed3-a1e5-3d91cea70456/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/b616a720-6684-42c6-83bb-4d298b11b3f3/", "state": "Init", "target_num_nodes": 1, "uuid": "b616a720-6684-42c6-83bb-4d298b11b3f3"}'
+    return status_code, json.loads(resp)
+
+def fake_nodecluster_save():
+    status_code = 201
+    resp = '{"actions": ["/api/v1/action/f47e26a6-c60c-416f-a0a9-ddf14e3aae83/"], "current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "my_cluster", "node_type": "/api/v1/nodetype/digitalocean/1gb/", "nodes": ["/api/v1/node/2cfe7823-f551-4c7b-a82c-f6ab31d7ca25/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/e7915a74-618b-4908-9189-dce965465702/", "state": "Init", "target_num_nodes": 1, "uuid": "e7915a74-618b-4908-9189-dce965465702"}'
+    return status_code, json.loads(resp)
+
+def fake_nodecluster_deploy():
+    status_code = 202
+    resp = '{"actions": ["/api/v1/action/f47e26a6-c60c-416f-a0a9-ddf14e3aae83/", "/api/v1/action/d110016e-e65d-4ce7-9f11-50c6302494a6/"], "current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "my_cluster", "node_type": "/api/v1/nodetype/digitalocean/1gb/", "nodes": ["/api/v1/node/2cfe7823-f551-4c7b-a82c-f6ab31d7ca25/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/e7915a74-618b-4908-9189-dce965465702/", "state": "Deploying", "target_num_nodes": 1, "uuid": "e7915a74-618b-4908-9189-dce965465702"}'
+    return status_code, json.loads(resp)
+
+def fake_nodecluster_delete():
+    status_code = 202
+    resp = '{"actions": ["/api/v1/action/f47e26a6-c60c-416f-a0a9-ddf14e3aae83/", "/api/v1/action/d110016e-e65d-4ce7-9f11-50c6302494a6/", "/api/v1/action/e33b4bb1-192b-46a6-a1ba-eadfc494c2dd/"], "current_num_nodes": 1, "deployed_datetime": "Mon, 29 Sep 2014 23:45:45 +0000", "destroyed_datetime": null, "name": "my_cluster", "node_type": "/api/v1/nodetype/digitalocean/1gb/", "nodes": ["/api/v1/node/2cfe7823-f551-4c7b-a82c-f6ab31d7ca25/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/e7915a74-618b-4908-9189-dce965465702/", "state": "Terminating", "target_num_nodes": 0, "uuid": "e7915a74-618b-4908-9189-dce965465702"}'
+    return status_code, json.loads(resp)
