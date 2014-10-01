@@ -3,13 +3,13 @@ import json
 from base import RESTModel
 
 
-class Cluster(RESTModel):
-    """Represents a Tutum Cluster object"""
+class Service(RESTModel):
+    """Represents a Tutum Service object"""
 
-    endpoint = "/application"
+    endpoint = "/service"
 
     def start(self):
-        """Starts the cluster in Tutum.
+        """Starts the service in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -17,7 +17,7 @@ class Cluster(RESTModel):
         return self._perform_action("start")
 
     def stop(self):
-        """Stops the cluster in Tutum.
+        """Stops the service in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -25,7 +25,7 @@ class Cluster(RESTModel):
         return self._perform_action("stop")
 
     def redeploy(self, tag=None):
-        """Redeploy the cluster in Tutum.
+        """Redeploy the service in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -34,9 +34,9 @@ class Cluster(RESTModel):
 
     @property
     def logs(self):
-        """Fetches and returns the logs for the cluster from Tutum
+        """Fetches and returns the logs for the service from Tutum
 
-        :returns: string -- the current logs of the cluster
+        :returns: string -- the current logs of the service
         :raises: TutumApiError
         """
         return self._expand_attribute("logs")

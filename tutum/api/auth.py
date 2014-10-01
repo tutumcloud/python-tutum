@@ -70,9 +70,9 @@ def load_from_file(file="~/.tutum"):
         cfgfile = os.path.expanduser(file)
         cp = ConfigParser.ConfigParser()
         cp.read(cfgfile)
-        return (cp.get("auth", "user"), cp.get("auth", "apikey"))
+        return cp.get("auth", "user"), cp.get("auth", "apikey")
     except ConfigParser.Error:
-        return (None, None)
+        return None, None
 
 
 def get_auth_header():
