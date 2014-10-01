@@ -46,10 +46,7 @@ class RESTModel(object):
 
         :returns: str -- the primary key for the object
         """
-        if hasattr(self, '_pk_key'):
-            return self._pk_key()
-        else:
-            return None
+        return getattr(self, self._pk_key(), None)
 
     @classmethod
     def _pk_key(cls):

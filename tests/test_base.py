@@ -6,6 +6,13 @@ from tutum.api.base import RESTModel
 
 
 class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.pk = RESTModel.pk
+        RESTModel.pk = 'uuid'
+
+    def tearDown(self):
+        RESTModel.pk = self.pk
+
     def test_base_init(self):
         model = RESTModel(key1='value1', key2='value2')
         self.assertEqual('value1', model.key1)
