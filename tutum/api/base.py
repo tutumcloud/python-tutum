@@ -132,6 +132,8 @@ class RESTModel(object):
             payload = None
             if params:
                 payload = json_parser.dumps(params)
+            if not payload:
+                payload = json_parser.dumps({})
             # Make the request
             success = False
             json = send_request(action, url, data=payload)
