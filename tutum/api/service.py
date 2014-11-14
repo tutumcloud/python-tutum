@@ -1,9 +1,9 @@
 import json
 
-from base import RESTModel
+from base import Mutable, Taggable
 
 
-class Service(RESTModel):
+class Service(Mutable, Taggable):
     """Represents a Tutum Service object"""
 
     endpoint = "/service"

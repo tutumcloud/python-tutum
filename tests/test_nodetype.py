@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 
@@ -25,12 +26,6 @@ class NodeTypeTestCase(unittest.TestCase):
             result = json.loads(json.dumps(nodetypes[i].get_all_attributes()))
             target = json.loads(json.dumps(attributes[i]))
             self.assertDictEqual(target, result)
-
-    def test_nodetype_save(self):
-        self.assertRaises(AttributeError, tutum.NodeType().save)
-
-    def test_nodetype_delete(self):
-        self.assertRaises(AttributeError, tutum.NodeType().delete)
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_nodetype_fetch(self, mock_send):

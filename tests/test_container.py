@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 

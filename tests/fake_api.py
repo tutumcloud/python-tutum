@@ -1,6 +1,8 @@
-import requests
 import json
 import datetime
+
+import requests
+
 
 FAKE_USER = 'fake_tutum_user'
 FAKE_PASSWORD = 'fake_tutum_password'

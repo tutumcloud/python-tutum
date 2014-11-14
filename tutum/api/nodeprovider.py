@@ -1,7 +1,7 @@
-from base import RESTModel
+from base import Immutable
 
 
-class Provider(RESTModel):
+class Provider(Immutable):
     """Represents a Tutum Provider object"""
 
     endpoint = "/provider"

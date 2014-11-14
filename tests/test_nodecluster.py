@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 
@@ -36,7 +37,8 @@ class NodeClusterTestCase(unittest.TestCase):
             '{"actions": ["/api/v1/action/f47e26a6-c60c-416f-a0a9-ddf14e3aae83/"], "current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "my_cluster", "node_type": "/api/v1/nodetype/digitalocean/1gb/", "nodes": ["/api/v1/node/2cfe7823-f551-4c7b-a82c-f6ab31d7ca25/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/e7915a74-618b-4908-9189-dce965465702/", "state": "Init", "target_num_nodes": 1, "uuid": "e7915a74-618b-4908-9189-dce965465702"}'
         )
         mock_send.return_value = fake_resp(fake_nodecluster_save)
-        cluster = tutum.NodeCluster.create(name="my_cluster", region="/api/v1/region/digitalocean/lon1/", node_type= "/api/v1/nodetype/digitalocean/1gb/")
+        cluster = tutum.NodeCluster.create(name="my_cluster", region="/api/v1/region/digitalocean/lon1/",
+                                           node_type="/api/v1/nodetype/digitalocean/1gb/")
         self.assertTrue(cluster.save())
         result = json.loads(json.dumps(cluster.get_all_attributes()))
         target = json.loads(json.dumps(attribute))
@@ -48,7 +50,8 @@ class NodeClusterTestCase(unittest.TestCase):
             '{"actions": ["/api/v1/action/f47e26a6-c60c-416f-a0a9-ddf14e3aae83/", "/api/v1/action/d110016e-e65d-4ce7-9f11-50c6302494a6/"], "current_num_nodes": 1, "deployed_datetime": null, "destroyed_datetime": null, "name": "my_cluster", "node_type": "/api/v1/nodetype/digitalocean/1gb/", "nodes": ["/api/v1/node/2cfe7823-f551-4c7b-a82c-f6ab31d7ca25/"], "region": "/api/v1/region/digitalocean/lon1/", "resource_uri": "/api/v1/nodecluster/e7915a74-618b-4908-9189-dce965465702/", "state": "Deploying", "target_num_nodes": 1, "uuid": "e7915a74-618b-4908-9189-dce965465702"}'
         )
         mock_send.side_effect = [fake_resp(fake_nodecluster_save), fake_resp(fake_nodecluster_deploy)]
-        cluster = tutum.NodeCluster.create(name="my_cluster", region="/api/v1/region/digitalocean/lon1/", node_type= "/api/v1/nodetype/digitalocean/1gb/")
+        cluster = tutum.NodeCluster.create(name="my_cluster", region="/api/v1/region/digitalocean/lon1/",
+                                           node_type="/api/v1/nodetype/digitalocean/1gb/")
         cluster.save()
         self.assertTrue(cluster.deploy())
         result = json.loads(json.dumps(cluster.get_all_attributes()))

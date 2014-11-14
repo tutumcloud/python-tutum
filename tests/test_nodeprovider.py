@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 
@@ -17,12 +18,6 @@ class ProviderTestCase(unittest.TestCase):
             result = json.loads(json.dumps(providers[i].get_all_attributes()))
             target = json.loads(json.dumps(attributes[i]))
             self.assertDictEqual(target, result)
-
-    def test_provider_save(self):
-        self.assertRaises(AttributeError, tutum.Provider().save)
-
-    def test_provider_delete(self):
-        self.assertRaises(AttributeError, tutum.Provider().delete)
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_provider_fetch(self, mock_send):

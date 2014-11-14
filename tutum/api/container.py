@@ -1,8 +1,9 @@
 import json
-from base import RESTModel
+
+from base import Mutable
 
 
-class Container(RESTModel):
+class Container(Mutable):
     """Represents a Tutum Container object"""
 
     endpoint = "/container"

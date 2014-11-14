@@ -1,7 +1,7 @@
-from base import RESTModel
+from base import Mutable, Taggable
 
 
-class Image(RESTModel):
+class Image(Mutable, Taggable):
     """Represents a Tutum Image object"""
 
     endpoint = "/image"
