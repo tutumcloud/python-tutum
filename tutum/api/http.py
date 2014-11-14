@@ -13,7 +13,7 @@ def send_request(method, path, **kwargs):
         url = "%s/" % url
     tutum.logger.info("%s %s %s" % (method, url, kwargs))
     # construct headers
-    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v1.0'}
+    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v%s' % tutum.__version__}
     headers.update(tutum.auth.get_auth_header())
     # construct request
     s = Session()
