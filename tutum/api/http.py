@@ -42,4 +42,5 @@ def send_request(method, path, **kwargs):
             raise TutumAuthError("Not authorized")
         else:
             raise TutumApiError("Status %s (%s %s). Response: %s" % (str(status_code), method, url, response.text))
+    tutum.logger.info("Response: %s", json)
     return json
