@@ -260,7 +260,13 @@ class Taggable(Restful):
         :type tag: string
         :returns: bool -- whether the operation was successful or not
         """
-        return self._perform_action('tags', data=json_parser.dumps({"name": tag}))
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, 'tags'])
+        json = send_request("POST", url, data=json_parser.dumps({"name": tag}))
+        if json:
+            return True
+        return False
 
     def _tag_delete(self, tag):
         """Deletes a tag from a taggable object
