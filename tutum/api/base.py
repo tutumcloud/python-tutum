@@ -263,7 +263,13 @@ class Taggable(Restful):
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         url = "/".join([self._detail_uri, 'tags'])
-        json = send_request("POST", url, data=json_parser.dumps({"name": tag}))
+        data = []
+        if isinstance(tag, list):
+            for t in tag:
+                data.append({"name": t})
+        else:
+            data.append({"name": tag})
+        json = send_request("POST", url, data=json_parser.dumps(data))
         if json:
             return True
         return False
