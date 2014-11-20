@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 
@@ -25,12 +26,6 @@ class RegionTestCase(unittest.TestCase):
             result = json.loads(json.dumps(regions[i].get_all_attributes()))
             target = json.loads(json.dumps(attrributes[i]))
             self.assertDictEqual(target, result)
-
-    def test_region_save(self):
-        self.assertRaises(AttributeError, tutum.Region().save)
-
-    def test_region_delete(self):
-        self.assertRaises(AttributeError, tutum.Region().delete)
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_region_fet(self, mock_send):

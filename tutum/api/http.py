@@ -11,9 +11,9 @@ def send_request(method, path, **kwargs):
     url = urljoin(tutum.base_url, path.strip("/"))
     if not url.endswith("/"):
         url = "%s/" % url
-    tutum.logger.info("%s %s %s" % (method, url, kwargs))
+    tutum.logger.info("%s %s %s" % (method, url, kwargs.get('data', '')))
     # construct headers
-    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v1.0'}
+    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v%s' % tutum.__version__}
     headers.update(tutum.auth.get_auth_header())
     # construct request
     s = Session()
@@ -42,4 +42,5 @@ def send_request(method, path, **kwargs):
             raise TutumAuthError("Not authorized")
         else:
             raise TutumApiError("Status %s (%s %s). Response: %s" % (str(status_code), method, url, response.text))
+    tutum.logger.info("Response: %s", json)
     return json

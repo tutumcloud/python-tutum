@@ -1,7 +1,7 @@
-from base import RESTModel
+from base import Mutable, Taggable
 
 
-class Node(RESTModel):
+class Node(Mutable, Taggable):
     """Represents a Tutum Node object"""
 
     endpoint = "/node"

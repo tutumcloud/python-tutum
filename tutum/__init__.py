@@ -14,9 +14,9 @@ from tutum.api.noderegion import Region
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
-__version__ = '0.10.0'
+__version__ = '0.10.5'
 
-#: The username used to authenticate with the API
+# : The username used to authenticate with the API
 user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)
 
 #: The ApiKey used to authenticate with the API

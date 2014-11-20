@@ -1,7 +1,8 @@
 import unittest
-import mock
-import tutum
 
+import mock
+
+import tutum
 from fake_api import *
 
 
@@ -19,12 +20,6 @@ class ActionTestCase(unittest.TestCase):
             result = json.loads(json.dumps(actions[i].get_all_attributes()))
             target = json.loads(json.dumps(attributes[i]))
             self.assertDictEqual(target, result)
-
-    def test_action_save(self):
-        self.assertRaises(AttributeError, tutum.Action().save)
-
-    def test_action_delete(self):
-        self.assertRaises(AttributeError, tutum.Action().delete)
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_action_fetch(self, mock_send):

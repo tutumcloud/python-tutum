@@ -1,10 +1,11 @@
 import os
 import tempfile
 import unittest
-import tutum
-import mock
 import ConfigParser
 
+import mock
+
+import tutum
 from fake_api import *
 
 

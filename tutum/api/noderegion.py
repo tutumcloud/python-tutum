@@ -1,7 +1,7 @@
-from base import RESTModel
+from base import Immutable
 
 
-class Region(RESTModel):
+class Region(Immutable):
     """Represents a Tutum Region object"""
 
     endpoint = "/region"
@@ -9,9 +9,3 @@ class Region(RESTModel):
     @classmethod
     def _pk_key(cls):
         return 'name'
-
-    def delete(self):
-        raise AttributeError("'delete' is not supported in 'Region'")
-
-    def save(self):
-        raise AttributeError("'save' is not supported in 'Region'")

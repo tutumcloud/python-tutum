@@ -4,7 +4,7 @@ from http import send_request
 from exceptions import TutumApiError
 
 
-class RESTModel(object):
+class Restful(object):
     _detail_uri = None
 
     def __init__(self, **kwargs):
@@ -20,7 +20,7 @@ class RESTModel(object):
             if not name in changed_attrs:
                 changed_attrs.append(name)
                 self.__setchanges__(changed_attrs)
-        super(RESTModel, self).__setattr__(name, value)
+        super(Restful, self).__setattr__(name, value)
 
     def __getchanges__(self):
         """Internal. Convenience method to get the changed attrs list"""
@@ -29,7 +29,7 @@ class RESTModel(object):
     def __setchanges__(self, val):
         """Internal. Convenience method to set the changed attrs list"""
         # Use the super implementation to prevent infinite recursion
-        super(RESTModel, self).__setattr__('__changedattrs__', val)
+        super(Restful, self).__setattr__('__changedattrs__', val)
 
     def _loaddict(self, dict):
         """Internal. Sets the model attributes to the dictionary values passed"""
@@ -64,25 +64,40 @@ class RESTModel(object):
         """
         return len(self.__getchanges__()) > 0
 
-    @classmethod
-    def list(cls, **kwargs):
-        """List all objects for the authenticated user, optionally filtered by ``kwargs``
-
-        :returns: list -- a list of objects that match the query
-        """
-        objects = []
-        endpoint = getattr(cls, 'endpoint', None)
-        assert endpoint, "Endpoint not specified for %s" % cls.__name__
-        json = send_request('GET', endpoint, params=kwargs)
+    def _perform_action(self, action, data={}):
+        """Internal. Performs the specified action on the object remotely"""
+        success = False
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, action])
+        json = send_request("POST", url, data=data)
         if json:
-            json_objects = json.get('objects', [])
-            for json_obj in json_objects:
-                instance = cls()
-                instance._loaddict(json_obj)
-                objects.append(instance)
-        return objects
+            self._loaddict(json)
+            success = True
+        return success
+
+    def _expand_attribute(self, attribute):
+        """Internal. Expands the given attribute from remote information"""
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, attribute])
+        json = send_request("GET", url)
+        if json:
+            return json[attribute]
+        return None
+
+    def get_all_attributes(self):
+        """Returns a dict with all object attributes
+
+        :returns: dict -- all object attributes as a dict
+        """
+        attributes = {}
+        for attr in [attr for attr in vars(self) if not attr.startswith('_')]:
+            attributes[attr] = getattr(self, attr, None)
+        return attributes
 
 
+class Immutable(Restful):
     @classmethod
     def fetch(cls, pk):
         """Fetch an individual model given the pk
@@ -101,6 +116,83 @@ class RESTModel(object):
             instance = cls()
             instance._loaddict(json)
         return instance
+
+    @classmethod
+    def list(cls, **kwargs):
+        """List all objects for the authenticated user, optionally filtered by ``kwargs``
+
+        :returns: list -- a list of objects that match the query
+        """
+        objects = []
+        endpoint = getattr(cls, 'endpoint', None)
+        assert endpoint, "Endpoint not specified for %s" % cls.__name__
+
+        json = send_request('GET', endpoint, params=kwargs)
+        if json:
+            json_objects = json.get('objects', [])
+            for json_obj in json_objects:
+                instance = cls()
+                instance._loaddict(json_obj)
+                objects.append(instance)
+        return objects
+
+    def refresh(self, force=False):
+        """Reloads the object with remote information
+
+        :param force: Force reloading even if there are pending changes
+        :type force: bool
+        :returns: bool -- whether the operation was successful or not
+        """
+        success = False
+        if self.is_dirty and not force:
+            # We have local non-committed changes - rejecting the refresh
+            success = False
+        elif not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        else:
+            json = send_request("GET", self._detail_uri)
+            if json:
+                self._loaddict(json)
+                success = True
+        return success
+
+
+class Mutable(Immutable):
+    @classmethod
+    def create(cls, **kwargs):
+        """Returns a new instance of the model (without saving it) with the attributes specified in ``kwargs``
+
+        :returns: RESTModel -- a new local instance of the model
+        """
+        return cls(**kwargs)
+
+    def delete(self, suffix=""):
+        """Deletes the object in Tutum
+
+        :param suffix: delete affiliated stuff attached the object, like tags etc.
+        :type suffix: string
+        :returns: bool -- whether the operation was successful or not
+        """
+        if not self._detail_uri:
+            raise TutumApiError("You must save the object before performing this operation")
+        action = "DELETE"
+        url = self._detail_uri
+        if suffix:
+            if suffix.startswith("/"):
+                suffix = suffix[1:]
+            if url.endswith("/"):
+                url = "".join([url, suffix])
+            else:
+                url = "/".join([url, suffix])
+        json = send_request(action, url)
+        if json:
+            self._loaddict(json)
+        else:
+            # Object deleted successfully and nothing came back - deleting PK reference.
+            self._detail_uri = None
+            # setattr(self, self._pk_key(), None) -- doesn't work
+            self.__setchanges__([])
+        return True
 
     def save(self):
         """Create or update the model in Tutum
@@ -142,81 +234,62 @@ class RESTModel(object):
                 success = True
         return success
 
-    def refresh(self, force=False):
-        """Reloads the object with remote information
 
-        :param force: Force reloading even if there are pending changes
-        :type force: bool
+class Taggable(Restful):
+    class Tag(object):
+        def __init__(self, restful):
+            self.restful = restful
+
+        def add(self, tag):
+            return self.restful._tag_add(tag)
+
+        def delete(self, tag):
+            return self.restful._tag_delete(tag)
+
+        def list(self):
+            return self.restful._tag_list()
+
+    @property
+    def tag(self):
+        return Taggable.Tag(self)
+
+    def _tag_add(self, tag):
+        """Adds a tag from a taggable object
+
+        :param tag: the tag name to be added
+        :type tag: string
         :returns: bool -- whether the operation was successful or not
         """
-        success = False
-        if self.is_dirty and not force:
-            # We have local non-committed changes - rejecting the refresh
-            success = False
-        elif not self._detail_uri:
+        if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
+        url = "/".join([self._detail_uri, 'tags'])
+        data = []
+        if isinstance(tag, list):
+            for t in tag:
+                data.append({"name": t})
         else:
-            json = send_request("GET", self._detail_uri)
-            if json:
-                self._loaddict(json)
-                success = True
-        return success
+            data.append({"name": tag})
+        json = send_request("POST", url, data=json_parser.dumps(data))
+        if json:
+            return True
+        return False
 
-    def delete(self):
-        """Deletes the object in Tutum
+    def _tag_delete(self, tag):
+        """Deletes a tag from a taggable object
 
+        :param tag: the tag name to be deleted
+        :type tag: string
         :returns: bool -- whether the operation was successful or not
         """
-        if not self._detail_uri:
-            raise TutumApiError("You must save the object before performing this operation")
-        action = "DELETE"
-        url = self._detail_uri
-        json = send_request(action, url)
-        if json:
-            self._loaddict(json)
-        else:
-            # Object deleted successfully and nothing came back - deleting PK reference.
-            self._detail_uri = None
-            # setattr(self, self._pk_key(), None) -- doesn't work
-            self.__setchanges__([])
-        return True
+        return self.delete("tags/%s" % tag)
 
-    def _perform_action(self, action, data=None):
-        """Internal. Performs the specified action on the object remotely"""
-        success = False
-        if not self._detail_uri:
-            raise TutumApiError("You must save the object before performing this operation")
-        url = "/".join([self._detail_uri, action])
-        json = send_request("POST", url, data=data)
-        if json:
-            self._loaddict(json)
-            success = True
-        return success
+    def _tag_list(self):
+        """List all tags for the taggable objects
 
-    def _expand_attribute(self, attribute):
-        """Internal. Expands the given attribute from remote information"""
-        if not self._detail_uri:
-            raise TutumApiError("You must save the object before performing this operation")
-        url = "/".join([self._detail_uri, attribute])
-        json = send_request("GET", url)
-        if json:
-            return json[attribute]
-        return None
-
-    @classmethod
-    def create(cls, **kwargs):
-        """Returns a new instance of the model (without saving it) with the attributes specified in ``kwargs``
-
-        :returns: RESTModel -- a new local instance of the model
+        :returns: list -- a list of tags that match the query
         """
-        return cls(**kwargs)
-
-    def get_all_attributes(self):
-        """Returns a dict with all object attributes
-
-        :returns: dict -- all object attributes as a dict
-        """
-        attributes = {}
-        for attr in [attr for attr in vars(self) if not attr.startswith('_')]:
-            attributes[attr] = getattr(self, attr, None)
-        return attributes
+        url = "/".join([self._detail_uri, "tags"])
+        json = send_request('GET', url)
+        if json:
+            return json.get('objects', [])
+        return []

@@ -1,7 +1,7 @@
-from base import RESTModel
+from base import Immutable
 
 
-class Action(RESTModel):
+class Action(Immutable):
     """Represents a Tutum Action object"""
 
     endpoint = "/action"
@@ -9,9 +9,3 @@ class Action(RESTModel):
     @classmethod
     def _pk_key(cls):
         return 'uuid'
-
-    def delete(self):
-        raise AttributeError("'delete' is not supported in 'Action'")
-
-    def save(self):
-        raise AttributeError("'save' is not supported in 'Action'")
