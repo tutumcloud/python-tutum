@@ -10,9 +10,17 @@ class Node(Mutable, Taggable):
         raise AttributeError("'save' is not supported in 'Node'")
 
     def deploy(self, tag=None):
-        """Deploy the nodeCluster.
+        """Deploy the node.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
         return self._perform_action("deploy")
+
+    def upgrade_docker(self):
+        """upgrade docker on the node.
+
+        :returns: bool -- whether or not the operation succeeded
+        :raises: TutumApiError
+        """
+        return self._perform_action("docker-upgrade")
