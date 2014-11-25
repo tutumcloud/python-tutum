@@ -166,24 +166,14 @@ class Mutable(Immutable):
         """
         return cls(**kwargs)
 
-    def delete(self, suffix=""):
+    def delete(self):
         """Deletes the object in Tutum
-
-        :param suffix: delete affiliated stuff attached the object, like tags etc.
-        :type suffix: string
         :returns: bool -- whether the operation was successful or not
         """
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         action = "DELETE"
         url = self._detail_uri
-        if suffix:
-            if suffix.startswith("/"):
-                suffix = suffix[1:]
-            if url.endswith("/"):
-                url = "".join([url, suffix])
-            else:
-                url = "/".join([url, suffix])
         json = send_request(action, url)
         if json:
             self._loaddict(json)
@@ -236,60 +226,6 @@ class Mutable(Immutable):
 
 
 class Taggable(Restful):
-    class Tag(object):
-        def __init__(self, restful):
-            self.restful = restful
+    pass
 
-        def add(self, tag):
-            return self.restful._tag_add(tag)
 
-        def delete(self, tag):
-            return self.restful._tag_delete(tag)
-
-        def list(self):
-            return self.restful._tag_list()
-
-    @property
-    def tag(self):
-        return Taggable.Tag(self)
-
-    def _tag_add(self, tag):
-        """Adds a tag from a taggable object
-
-        :param tag: the tag name to be added
-        :type tag: string
-        :returns: bool -- whether the operation was successful or not
-        """
-        if not self._detail_uri:
-            raise TutumApiError("You must save the object before performing this operation")
-        url = "/".join([self._detail_uri, 'tags'])
-        data = []
-        if isinstance(tag, list):
-            for t in tag:
-                data.append({"name": t})
-        else:
-            data.append({"name": tag})
-        json = send_request("POST", url, data=json_parser.dumps(data))
-        if json:
-            return True
-        return False
-
-    def _tag_delete(self, tag):
-        """Deletes a tag from a taggable object
-
-        :param tag: the tag name to be deleted
-        :type tag: string
-        :returns: bool -- whether the operation was successful or not
-        """
-        return self.delete("tags/%s" % tag)
-
-    def _tag_list(self):
-        """List all tags for the taggable objects
-
-        :returns: list -- a list of tags that match the query
-        """
-        url = "/".join([self._detail_uri, "tags"])
-        json = send_request('GET', url)
-        if json:
-            return json.get('objects', [])
-        return []
