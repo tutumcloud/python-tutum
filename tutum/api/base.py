@@ -225,7 +225,9 @@ class Mutable(Immutable):
         return success
 
 
-class Taggable(Restful):
+class Taggable(object):
     pass
 
 
+class Webhookable(object):
+    pass

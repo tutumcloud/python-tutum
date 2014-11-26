@@ -12,6 +12,7 @@ from tutum.api.nodetype import NodeType
 from tutum.api.nodeprovider import Provider
 from tutum.api.noderegion import Region
 from tutum.api.tag import Tag
+from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 

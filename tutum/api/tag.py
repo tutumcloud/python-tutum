@@ -1,5 +1,4 @@
 import json as json_parser
-import copy
 
 from base import Taggable
 from http import send_request
@@ -8,7 +7,7 @@ from exceptions import TutumApiError
 
 class Tag(object):
     def __init__(self):
-        self._tags = []
+
         self.tags = []
 
     def add(self, tagname):
@@ -28,6 +27,7 @@ class Tag(object):
 
     def delete(self, tag):
         """Deletes the object in Tutum
+
         :returns: bool -- whether the operation was successful or not
         """
         if not self.endpoint:
@@ -41,9 +41,7 @@ class Tag(object):
         send_request(action, url)
         if {"name": tag} in self.tags:
             self.tags.remove({"name": tag})
-        for _tag in self._tags:
-            if _tag.get('name', '') == tag:
-                self._tags.remove(_tag)
+
         return True
 
     @classmethod
@@ -67,7 +65,6 @@ class Tag(object):
             tagname = _tag.get("name", "")
             if tagname:
                 tags.append({"name": tagname})
-        tag._tags = copy.deepcopy(tags)
         return tag
 
     def list(self):
@@ -88,12 +85,6 @@ class Tag(object):
 
         json = send_request("POST", self.endpoint, data=json_parser.dumps(self.tags))
         if json:
-            tags = []
-            for _tag in json:
-                tagname = _tag.get("name", "")
-                if tagname:
-                    tags.append({"name": tagname})
-            self._tags = copy.deepcopy(tags)
             self.tags = []
             return True
         return False

@@ -1,9 +1,9 @@
 import json
 
-from base import Mutable, Taggable
+from base import Mutable, Taggable, Webhookable
 
 
-class Service(Mutable, Taggable):
+class Service(Mutable, Taggable, Webhookable):
     """Represents a Tutum Service object"""
 
     endpoint = "/service"
