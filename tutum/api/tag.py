@@ -58,23 +58,23 @@ class Tag(object):
         if not taggable._detail_uri:
             raise TutumApiError("You must save the taggable object before performing this operation")
         tag = cls()
-        taggable.refresh()
+
         tag.endpoint = "/".join([taggable._detail_uri, "tags"])
         tags = []
-        for _tag in taggable.tags:
+        for _tag in tag.list():
             tagname = _tag.get("name", "")
             if tagname:
                 tags.append({"name": tagname})
         return tag
 
-    def list(self):
-        """List all tags of a taggable object
+    def list(self, **kwargs):
+        """List all tags of a taggable object, optionally filtered by ``kwargs``
 
         :returns: list -- a list of tags that match the query
         """
         if not self.endpoint:
             raise TutumApiError("You must initialize the tag object before performing this operation")
-        json = send_request('GET', self.endpoint)
+        json = send_request('GET', self.endpoint, params=kwargs)
         if json:
             return json.get('objects', [])
         return []

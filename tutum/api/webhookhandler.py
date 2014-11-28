@@ -56,23 +56,22 @@ class WebhookHandler(object):
         if not webhookable._detail_uri:
             raise TutumApiError("You must save the webhookable object before performing this operation")
         webhookhandler = cls()
-        webhookable.refresh()
         webhookhandler.endpoint = "/".join([webhookable._detail_uri, "webhook/handler"])
         handlers = []
-        for handler in webhookable.webhooks:
+        for handler in webhookhandler.list():
             handlername = handler.get("name", "")
             if handlername:
                 handlers.append({"name": handlername})
         return webhookhandler
 
-    def list(self):
-        """List all handlers from a webhookable object
+    def list(self, **kwargs):
+        """List all handlers from a webhookable object, optionally filtered by ``kwargs``
 
         :returns: list -- a list of webhook handlers that match the query
         """
         if not self.endpoint:
             raise TutumApiError("You must initialize the WebhookHander object before performing this operation")
-        json = send_request('GET', self.endpoint)
+        json = send_request('GET', self.endpoint, params=kwargs)
         if json:
             return json.get('objects', [])
         return []
