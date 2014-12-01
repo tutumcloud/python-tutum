@@ -123,18 +123,30 @@ class Immutable(Restful):
 
         :returns: list -- a list of objects that match the query
         """
-        objects = []
+        restful = []
         endpoint = getattr(cls, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % cls.__name__
 
-        json = send_request('GET', endpoint, params=kwargs)
-        if json:
-            json_objects = json.get('objects', [])
-            for json_obj in json_objects:
-                instance = cls()
-                instance._loaddict(json_obj)
-                objects.append(instance)
-        return objects
+        objects=[]
+        while True:
+            json = send_request('GET', endpoint, params=kwargs)
+            objs = json.get('objects', [])
+            meta = json.get('meta', {})
+            next_url = meta.get('next', '')
+            offset = meta.get('offset', 0)
+            limit = meta.get('limit', 0)
+            objects.extend(objs)
+            if next_url:
+                kwargs['offset'] = offset + limit
+                kwargs['limit'] = limit
+            else:
+                break
+
+        for obj in objects:
+            instance = cls()
+            instance._loaddict(obj)
+            restful.append(instance)
+        return restful
 
     def refresh(self, force=False):
         """Reloads the object with remote information

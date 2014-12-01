@@ -10,6 +10,10 @@ class WebhookHandler(object):
         self.webhookhandlers = []
 
     def add(self, handler):
+        """Add a hander to WebhookHandler object
+
+        :returns:None
+        """
         if isinstance(handler, list):
             for h in handler:
                 self.webhookhandlers.append({"name": h})
@@ -71,12 +75,29 @@ class WebhookHandler(object):
         """
         if not self.endpoint:
             raise TutumApiError("You must initialize the WebhookHander object before performing this operation")
-        json = send_request('GET', self.endpoint, params=kwargs)
-        if json:
-            return json.get('objects', [])
-        return []
+
+        objects = []
+        while True:
+            json = send_request('GET', self.endpoint, params=kwargs)
+            objs = json.get('objects', [])
+            meta = json.get('meta', {})
+            next_url = meta.get('next', '')
+            offset = meta.get('offset', 0)
+            limit = meta.get('limit', 0)
+            objects.extend(objs)
+            if next_url:
+                kwargs['offset'] = offset + limit
+                kwargs['limit'] = limit
+            else:
+                break
+
+        return objects
 
     def save(self):
+        """Create or update the webhandler in Tutum
+
+        :returns: bool -- whether the operation was successful or not
+        """
         if not self.endpoint:
             raise TutumApiError("You must initialize the WebhookHander object before performing this operation")
 
@@ -87,6 +108,10 @@ class WebhookHandler(object):
         return False
 
     def call(self, uuid):
+        """Call the webhook handler given the uuid
+
+        :returns: bool -- whether the operation was successful or not
+        """
         if not self.endpoint:
             raise TutumApiError("You must initialize the WebhookHander object before performing this operation")
 

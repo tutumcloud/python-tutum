@@ -11,6 +11,10 @@ class Tag(object):
         self.tags = []
 
     def add(self, tagname):
+        """Add a tag to Tag object
+
+        :returns:None
+        """
         if isinstance(tagname, list):
             for t in tagname:
                 self.tags.append({"name": t})
@@ -74,12 +78,29 @@ class Tag(object):
         """
         if not self.endpoint:
             raise TutumApiError("You must initialize the tag object before performing this operation")
-        json = send_request('GET', self.endpoint, params=kwargs)
-        if json:
-            return json.get('objects', [])
-        return []
+
+        objects=[]
+        while True:
+            json = send_request('GET', self.endpoint, params=kwargs)
+            objs = json.get('objects', [])
+            meta = json.get('meta', {})
+            next_url = meta.get('next', '')
+            offset = meta.get('offset', 0)
+            limit = meta.get('limit', 0)
+            objects.extend(objs)
+            if next_url:
+                kwargs['offset'] = offset + limit
+                kwargs['limit'] = limit
+            else:
+                break
+
+        return objects
 
     def save(self):
+        """Create or update the tag in Tutum
+
+        :returns: bool -- whether the operation was successful or not
+        """
         if not self.endpoint:
             raise TutumApiError("You must initialize the tag object before performing this operation")
 
