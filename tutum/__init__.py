@@ -11,10 +11,12 @@ from tutum.api.nodecluster import NodeCluster
 from tutum.api.nodetype import NodeType
 from tutum.api.nodeprovider import Provider
 from tutum.api.noderegion import Region
+from tutum.api.tag import Tag
+from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
-__version__ = '0.10.5'
+__version__ = '0.11.0'
 
 # : The username used to authenticate with the API
 user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)

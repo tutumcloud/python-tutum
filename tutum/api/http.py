@@ -1,7 +1,6 @@
 from urlparse import urljoin
 
 from requests import Request, Session
-
 import tutum
 from exceptions import TutumApiError, TutumAuthError
 
