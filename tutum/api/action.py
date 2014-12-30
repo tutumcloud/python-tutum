@@ -1,4 +1,4 @@
-from base import Immutable
+from .base import Immutable
 
 
 class Action(Immutable):

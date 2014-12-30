@@ -1,8 +1,8 @@
 import json as json_parser
 
-from base import Webhookable
-from http import send_request
-from exceptions import TutumApiError
+from .base import Webhookable
+from .http import send_request
+from .exceptions import TutumApiError
 
 
 class WebhookHandler(object):

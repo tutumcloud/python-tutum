@@ -1,6 +1,6 @@
 import json
 
-from base import Mutable, Taggable, Webhookable
+from .base import Mutable, Taggable, Webhookable
 
 
 class Service(Mutable, Taggable, Webhookable):

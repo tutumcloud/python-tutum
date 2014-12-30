@@ -1,7 +1,7 @@
 import json as json_parser
 
-from http import send_request
-from exceptions import TutumApiError
+from .http import send_request
+from .exceptions import TutumApiError
 
 
 class Restful(object):
@@ -9,7 +9,7 @@ class Restful(object):
 
     def __init__(self, **kwargs):
         """Simply reflect all the values in kwargs"""
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
 
     def __setattr__(self, name, value):
@@ -35,7 +35,7 @@ class Restful(object):
         """Internal. Sets the model attributes to the dictionary values passed"""
         endpoint = getattr(self, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % self.__class__.__name__
-        for k, v in dict.items():
+        for k, v in list(dict.items()):
             setattr(self, k, v)
         self._detail_uri = "/".join([endpoint, self.pk])
         self.__setchanges__([])

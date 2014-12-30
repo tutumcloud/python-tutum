@@ -3,7 +3,7 @@ import unittest
 import mock
 
 import tutum
-from fake_api import *
+from .fake_api import *
 
 
 class ImageTestCase(unittest.TestCase):

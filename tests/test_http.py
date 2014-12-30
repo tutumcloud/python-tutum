@@ -1,11 +1,11 @@
 import unittest
-import urlparse
+import urllib.parse
 
 import mock
 import requests
 
 import tutum
-from fake_api import fake_resp
+from .fake_api import fake_resp
 from tutum.api.base import send_request
 
 
@@ -18,7 +18,7 @@ class SendRequestTestCase(unittest.TestCase):
         self.assertRaises(tutum.TutumApiError, send_request, 'METHOD', 'path', data='data')
         headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v%s' % tutum.__version__}
         headers.update(tutum.auth.get_auth_header())
-        mock_Request.assert_called_with('METHOD', urlparse.urljoin(tutum.base_url, 'path/'),
+        mock_Request.assert_called_with('METHOD', urllib.parse.urljoin(tutum.base_url, 'path/'),
                                         headers=headers, data='data')
 
         mock_send.return_value = fake_resp(lambda: (200, json_obj))

@@ -1,9 +1,9 @@
-import ConfigParser
+import configparser
 import os
 
 from requests.auth import HTTPBasicAuth
 import tutum
-from http import send_request
+from .http import send_request
 
 
 def authenticate(username, password):
@@ -67,10 +67,10 @@ def load_from_file(file="~/.tutum"):
     """
     try:
         cfgfile = os.path.expanduser(file)
-        cp = ConfigParser.ConfigParser()
+        cp = configparser.ConfigParser()
         cp.read(cfgfile)
         return cp.get("auth", "user"), cp.get("auth", "apikey")
-    except ConfigParser.Error:
+    except configparser.Error:
         return None, None
 
 
