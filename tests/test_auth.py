@@ -63,7 +63,7 @@ class AuthTestCase(unittest.TestCase):
         self.assertIsNone(tutum.apikey)
 
     def test_auth_load_from_file(self):
-        file = tempfile.NamedTemporaryFile(delete=False)
+        file = tempfile.NamedTemporaryFile('w', delete=False)
         with file as f:
             f.writelines(["[auth]\n", "user = %s\n" % FAKE_USER, "apikey = %s\n" % FAKE_APIKEY])
         user_read, apikey_read = tutum.auth.load_from_file(file.name)
