@@ -1,7 +1,7 @@
 import unittest
 import urllib.parse
 
-import mock
+import unittest.mock as mock
 import requests
 
 import tutum

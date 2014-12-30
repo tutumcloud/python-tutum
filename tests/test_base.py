@@ -1,7 +1,7 @@
 import unittest
 import json
 
-import mock
+import unittest.mock as mock
 
 import tutum
 from tutum.api.base import Restful, Mutable, Immutable
