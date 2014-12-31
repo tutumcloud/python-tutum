@@ -1,11 +1,5 @@
 __author__ = 'fermayo'
 
-try:
-    import configparser
-except ImportError:
-    import sys
-    sys.modules['configparser'] = __import__('ConfigParser')
-
 # Python 3.4.2 includes mock in-box, prefer that version
 # For other versions, patch it up to use the external mock library
 try:
