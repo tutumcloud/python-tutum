@@ -1,4 +1,4 @@
-from base import Mutable, Taggable
+from .base import Mutable, Taggable
 
 
 class Image(Mutable, Taggable):

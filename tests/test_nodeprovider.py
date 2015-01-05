@@ -1,9 +1,9 @@
 import unittest
 
-import mock
+import unittest.mock as mock
 
 import tutum
-from fake_api import *
+from .fake_api import *
 
 
 class ProviderTestCase(unittest.TestCase):

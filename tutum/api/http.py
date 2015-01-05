@@ -1,8 +1,8 @@
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from requests import Request, Session
 import tutum
-from exceptions import TutumApiError, TutumAuthError
+from .exceptions import TutumApiError, TutumAuthError
 
 
 def send_request(method, path, **kwargs):

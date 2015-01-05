@@ -1,6 +1,9 @@
 import logging
 import os
 
+from future.standard_library import install_aliases
+install_aliases()
+
 from tutum.api import auth
 from tutum.api.service import Service
 from tutum.api.container import Container

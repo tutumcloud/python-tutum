@@ -1,8 +1,8 @@
 import json as json_parser
 
-from base import Taggable
-from http import send_request
-from exceptions import TutumApiError
+from .base import Taggable
+from .http import send_request
+from .exceptions import TutumApiError
 
 
 class Tag(object):

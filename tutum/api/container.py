@@ -1,6 +1,6 @@
 import json
 
-from base import Mutable
+from .base import Mutable
 
 
 class Container(Mutable):

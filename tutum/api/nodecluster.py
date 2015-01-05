@@ -1,4 +1,4 @@
-from base import Mutable, Taggable
+from .base import Mutable, Taggable
 from tutum.api.nodetype import NodeType
 from tutum.api.noderegion import Region
 
@@ -18,7 +18,7 @@ class NodeCluster(Mutable, Taggable):
 
     @classmethod
     def create(cls, **kwargs):
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key == "node_type" and isinstance(value, NodeType):
                 kwargs[key] = getattr(value, "resource_uri", "")
             if key == "region" and isinstance(value, Region):
