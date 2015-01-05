@@ -1,8 +1,5 @@
-dependencies:
-  override:
-    - pip install mock
 test:
   pre:
-    - pyenv global 2.6.8 2.7.6
+    - pyenv global 2.6.8 3.4.0
   override:
-    - python setup.py test
+    - make test
