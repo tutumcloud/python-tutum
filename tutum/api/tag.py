@@ -1,25 +1,25 @@
-import json as json_parser
-
 from .base import Taggable
-from .http import send_request
 from .exceptions import TutumApiError
 
 
 class Tag(object):
     def __init__(self):
-
         self.tags = []
 
     def add(self, tagname):
-        """Add a tag to Tag object
+        """Add a tag or a list of tags to Tag object. This operation will not take effect unless save() is called.
 
         :returns:None
         """
+
         if isinstance(tagname, list):
             for t in tagname:
-                self.tags.append({"name": t})
+                self.taggable.tags.append({"name": t})
         else:
-            self.tags.append({"name": tagname})
+            self.taggable.tags.append({"name": tagname})
+
+        self.taggable.__addchanges__('tags')
+
 
     @classmethod
     def create(cls, **kwargs):
@@ -29,24 +29,47 @@ class Tag(object):
         """
         return cls(**kwargs)
 
-    def delete(self, tag):
-        """Deletes the object in Tutum
+    def remove(self, tagname):
+        """remove a tag or a list of tags from Tutum. This operation will not take effect unless save() is called.
 
         :returns: bool -- whether the operation was successful or not
         """
-        if not self.endpoint:
+        if not self.taggable:
             raise TutumApiError("You must initialize the tag object before performing this operation")
 
-        if self.tags:
-            raise TutumApiError("You must save the object before performing this operation")
+        _tags = []
+        tagnames = []
+        if isinstance(tagname, list):
+            for n in tagname:
+                tagnames.append(n)
+        else:
+            tagnames.append(tagname)
 
-        action = "DELETE"
-        url = "/".join([self.endpoint, tag])
-        send_request(action, url)
-        if {"name": tag} in self.tags:
-            self.tags.remove({"name": tag})
+        for t in self.taggable.tags:
+            for tagname in tagnames:
+                if t.get("name", "") == tagname:
+                    _tags.append(t)
 
-        return True
+        if _tags:
+            for _tag in _tags:
+                self.taggable.tags.remove(_tag)
+            self.taggable.__addchanges__('tags')
+
+
+    def delete(self, tagname):
+        """delete a tag or a list of tags from Tutum.
+
+        :returns: bool -- whether the operation was successful or not
+        """
+        if not self.taggable:
+            raise TutumApiError("You must initialize the tag object before performing this operation")
+
+        if self.taggable.is_dirty:
+            raise TutumApiError("You must save the tab object before performing this operation")
+
+        self.remove(tagname)
+        return self.save()
+
 
     @classmethod
     def fetch(cls, taggable):
@@ -61,14 +84,10 @@ class Tag(object):
             raise TutumApiError("The object does not support tag")
         if not taggable._detail_uri:
             raise TutumApiError("You must save the taggable object before performing this operation")
-        tag = cls()
 
-        tag.endpoint = "/".join([taggable._detail_uri, "tags"])
-        tags = []
-        for _tag in tag.list():
-            tagname = _tag.get("name", "")
-            if tagname:
-                tags.append({"name": tagname})
+        tag = cls()
+        tag.taggable = taggable
+
         return tag
 
     def list(self, **kwargs):
@@ -76,36 +95,17 @@ class Tag(object):
 
         :returns: list -- a list of tags that match the query
         """
-        if not self.endpoint:
+        if not self.taggable:
             raise TutumApiError("You must initialize the tag object before performing this operation")
 
-        objects=[]
-        while True:
-            json = send_request('GET', self.endpoint, params=kwargs)
-            objs = json.get('objects', [])
-            meta = json.get('meta', {})
-            next_url = meta.get('next', '')
-            offset = meta.get('offset', 0)
-            limit = meta.get('limit', 0)
-            objects.extend(objs)
-            if next_url:
-                kwargs['offset'] = offset + limit
-                kwargs['limit'] = limit
-            else:
-                break
-
-        return objects
+        return self.taggable.tags
 
     def save(self):
         """Create or update the tag in Tutum
 
         :returns: bool -- whether the operation was successful or not
         """
-        if not self.endpoint:
+        if not self.taggable:
             raise TutumApiError("You must initialize the tag object before performing this operation")
 
-        json = send_request("POST", self.endpoint, data=json_parser.dumps(self.tags))
-        if json:
-            self.tags = []
-            return True
-        return False
+        return self.taggable.save()

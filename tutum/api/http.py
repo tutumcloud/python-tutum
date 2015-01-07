@@ -20,7 +20,7 @@ def send_request(method, path, **kwargs):
     # make the request
     response = s.send(req.prepare())
     status_code = getattr(response, 'status_code', None)
-    tutum.logger.info("Status: %s", str(status_code))
+    tutum.logger.info("Status: %s" % str(status_code))
     # handle the response
     if not status_code:
         # Most likely network trouble
@@ -41,5 +41,5 @@ def send_request(method, path, **kwargs):
             raise TutumAuthError("Not authorized")
         else:
             raise TutumApiError("Status %s (%s %s). Response: %s" % (str(status_code), method, url, response.text))
-    tutum.logger.info("Response: %s", json)
+    tutum.logger.info("Response: %s" % json)
     return json
