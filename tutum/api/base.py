@@ -12,14 +12,17 @@ class Restful(object):
         for k, v in list(kwargs.items()):
             setattr(self, k, v)
 
+    def __addchanges__(self, name):
+        changed_attrs = self.__getchanges__()
+        if not name in changed_attrs:
+            changed_attrs.append(name)
+            self.__setchanges__(changed_attrs)
+
     def __setattr__(self, name, value):
         """Keeps track of what attributes have been set"""
         current_value = getattr(self, name, None)
         if value != current_value:
-            changed_attrs = self.__getchanges__()
-            if not name in changed_attrs:
-                changed_attrs.append(name)
-                self.__setchanges__(changed_attrs)
+            self.__addchanges__(name)
         super(Restful, self).__setattr__(name, value)
 
     def __getchanges__(self):
@@ -127,7 +130,7 @@ class Immutable(Restful):
         endpoint = getattr(cls, 'endpoint', None)
         assert endpoint, "Endpoint not specified for %s" % cls.__name__
 
-        objects=[]
+        objects = []
         while True:
             json = send_request('GET', endpoint, params=kwargs)
             objs = json.get('objects', [])
@@ -220,8 +223,7 @@ class Mutable(Immutable):
             params = {}
             for attr in self.__getchanges__():
                 value = getattr(self, attr, None)
-                if value:
-                    params[attr] = value
+                params[attr] = value
             # Construct the json body
             payload = None
             if params:
