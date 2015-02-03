@@ -21,7 +21,7 @@ from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
-__version__ = '0.11.1'
+__version__ = '0.11.2'
 
 # : The username used to authenticate with the API
 user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)
