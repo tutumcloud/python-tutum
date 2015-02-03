@@ -31,5 +31,6 @@ apikey = auth.load_from_file()[1] or os.environ.get('TUTUM_APIKEY', None)
 
 #: The API endpoint to use
 base_url = os.environ.get('TUTUM_BASE_URL', "https://dashboard.tutum.co/api/v1/")
+tutum_auth = os.environ.get('TUTUM_AUTH', '')
 
 logger = logging.getLogger("python-tutum")
