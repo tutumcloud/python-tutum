@@ -49,7 +49,7 @@ def is_authenticated():
 
     :returns: bool -- whether the tutum user and apikey are set
     """
-    return tutum.user != None and tutum.apikey != None
+    return tutum.tutum_auth or (tutum.user != None and tutum.apikey != None)
 
 
 def logout():
@@ -75,6 +75,8 @@ def load_from_file(file="~/.tutum"):
 
 
 def get_auth_header():
+    if tutum.tutum_auth:
+        return {'Authorization': tutum.tutum_auth}
     if tutum.user and tutum.apikey:
         return {'Authorization': 'ApiKey %s:%s' % (tutum.user, tutum.apikey)}
     else:
