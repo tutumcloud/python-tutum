@@ -1,7 +1,7 @@
 python-tutum
 ============
 
-Python library for Tutum's API. Full documentation available at `http://docs.tutum.co/reference/api/ <http://docs.tutum.co/reference/api/>`_
+Python library for Tutum's API. Full documentation available at `https://docs.tutum.co/v2/api/?python <https://docs.tutum.co/v2/api/?python>`_
 
 
 Installing the library
