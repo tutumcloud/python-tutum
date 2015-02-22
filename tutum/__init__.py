@@ -18,6 +18,7 @@ from tutum.api.tag import Tag
 from tutum.api.volume import Volume
 from tutum.api.volumegroup import VolumeGroup
 from tutum.api.webhookhandler import WebhookHandler
+from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 
 
