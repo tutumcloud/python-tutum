@@ -1,15 +1,15 @@
 import json
 
-from .base import Mutable, Taggable, Webhookable
+from .base import Mutable
 
 
-class Service(Mutable, Taggable, Webhookable):
-    """Represents a Tutum Service object"""
+class Stack(Mutable):
+    """Represents a Tutum Stack object"""
 
-    endpoint = "/service"
+    endpoint = "/stack"
 
     def start(self):
-        """Starts the service in Tutum.
+        """Starts the stack in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -17,7 +17,7 @@ class Service(Mutable, Taggable, Webhookable):
         return self._perform_action("start")
 
     def stop(self):
-        """Stops the service in Tutum.
+        """Stops the stack in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
@@ -25,18 +25,10 @@ class Service(Mutable, Taggable, Webhookable):
         return self._perform_action("stop")
 
     def redeploy(self):
-        """Redeploy the service in Tutum.
+        """Redeploy the stack in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
         return self._perform_action("redeploy")
 
-    @property
-    def logs(self):
-        """Fetches and returns the logs for the service from Tutum
-
-        :returns: string -- the current logs of the service
-        :raises: TutumApiError
-        """
-        return self._expand_attribute("logs")
