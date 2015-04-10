@@ -22,7 +22,7 @@ from tutum.api.volumegroup import VolumeGroup
 from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError
-
+from tutum.api.utils import Utils
 
 __version__ = '0.12.6'
 

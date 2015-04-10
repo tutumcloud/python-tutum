@@ -6,3 +6,11 @@ class TutumApiError(Exception):
 class TutumAuthError(TutumApiError):
     """An 401 Unauthorized status code was returned when querying the API"""
     pass
+
+
+class NonUniqueIdentifier(TutumApiError):
+    pass
+
+
+class ObjectNotFound(TutumApiError):
+    pass
