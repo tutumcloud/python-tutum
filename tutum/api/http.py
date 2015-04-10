@@ -1,6 +1,6 @@
-from urllib.parse import urljoin
-
 from requests import Request, Session
+
+from urllib.parse import urljoin
 import tutum
 from .exceptions import TutumApiError, TutumAuthError
 

@@ -7,7 +7,9 @@ class Node(Mutable, Taggable):
     endpoint = "/node"
 
     def save(self):
-        raise AttributeError("'save' is not supported in 'Node'")
+        if not self._detail_uri:
+            raise AttributeError("Adding a new node to Tutum is not supported via 'save' method")
+        super(Node, self).save()
 
     def deploy(self, tag=None):
         """Deploy the node.

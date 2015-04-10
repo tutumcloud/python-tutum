@@ -2,6 +2,8 @@ import logging
 import os
 
 from future.standard_library import install_aliases
+
+
 install_aliases()
 
 from tutum.api import auth
@@ -20,18 +22,23 @@ from tutum.api.volumegroup import VolumeGroup
 from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError
+from tutum.api.utils import Utils
 
-
-__version__ = '0.12.6'
+__version__ = '0.14.0'
 
 # : The username used to authenticate with the API
-user = auth.load_from_file()[0] or os.environ.get('TUTUM_USER', None)
+user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
 
 #: The ApiKey used to authenticate with the API
-apikey = auth.load_from_file()[1] or os.environ.get('TUTUM_APIKEY', None)
+apikey = os.environ.get('TUTUM_APIKEY', None) or auth.load_from_file()[1]
 
 #: The API endpoint to use
 base_url = os.environ.get('TUTUM_BASE_URL', "https://dashboard.tutum.co/api/v1/")
+stream_url = os.environ.get('TUTUM_STREAM_URL', 'wss://stream.tutum.co/v1/')
+
 tutum_auth = os.environ.get('TUTUM_AUTH', '')
 
+logging.basicConfig()
 logger = logging.getLogger("python-tutum")
+
+from tutum.api.events import TutumEvents
