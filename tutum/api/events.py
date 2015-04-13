@@ -27,14 +27,14 @@ class TutumEvents:
 
     def _on_message(self, ws, message):
         try:
-            json_obj = json.loads(message)
-            if json_obj.get("type") == "error" and json_obj.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
+            event = json.loads(message)
+            if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
                 raise TutumAuthError("Not authorized")
         except ValueError:
             pass
 
         if self.message_handler:
-            self.message_handler(message)
+            self.message_handler(event)
 
     def _on_error(self, ws, error):
         if self.error_handler:
@@ -57,4 +57,5 @@ class TutumEvents:
         self.close_handler = handler
 
     def run_forever(self):
-        self.ws.run_forever()
+        while True:
+            self.ws.run_forever()
