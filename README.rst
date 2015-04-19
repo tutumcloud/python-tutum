@@ -96,7 +96,7 @@ Containers
     [<tutum.api.container.Container object at 0x10701ca90>, <tutum.api.container.Container object at 0x10701ca91>]
     >>> container = tutum.Container.fetch("7d6696b7-fbaf-471d-8e6b-ce7052586c24")
     <tutum.api.container.Container object at 0x10701ca90>
-    >>> container.web_public_dns = "my-web-app.example.com"
+    >>> container.public_dns = "my-web-app.example.com"
     >>> container.save()
     True
     >>> container.stop()
