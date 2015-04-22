@@ -1,8 +1,11 @@
 import urllib
-import websocket
-import tutum
 import json
+
+import websocket
+
+import tutum
 from .exceptions import TutumAuthError
+
 
 class TutumEvents:
     def __init__(self):
