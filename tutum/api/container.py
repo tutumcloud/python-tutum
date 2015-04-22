@@ -8,6 +8,10 @@ class Container(Mutable):
 
     endpoint = "/container"
 
+    def save(self):
+        raise AttributeError("'save' is not supported in 'Container' object. "
+                             "Please use the related 'Service' object instead.")
+
     def start(self):
         """Starts the container in Tutum.
 
