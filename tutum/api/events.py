@@ -20,6 +20,7 @@ class TutumEvents:
         self.message_handler = None
         self.error_handler = None
         self.close_handler = None
+        self.auth_error = False
 
     def _on_open(self, ws):
         if self.open_handler:
@@ -32,6 +33,7 @@ class TutumEvents:
             return
 
         if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
+            self.auth_error = True
             raise TutumAuthError("Not authorized")
         if event.get("type") == "auth":
             return
@@ -61,4 +63,6 @@ class TutumEvents:
 
     def run_forever(self):
         while True:
+            if self.auth_error:
+                raise TutumAuthError("Not authorized")
             self.ws.run_forever()
