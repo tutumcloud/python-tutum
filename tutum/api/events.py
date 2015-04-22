@@ -28,10 +28,13 @@ class TutumEvents:
     def _on_message(self, ws, message):
         try:
             event = json.loads(message)
-            if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
-                raise TutumAuthError("Not authorized")
         except ValueError:
-            pass
+            return
+
+        if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
+            raise TutumAuthError("Not authorized")
+        if event.get("type") == "auth":
+            return
 
         if self.message_handler:
             self.message_handler(event)
