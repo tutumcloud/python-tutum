@@ -64,8 +64,8 @@ class TutumEvents:
     def on_close(self, handler):
         self.close_handler = handler
 
-    def run_forever(self):
+    def run_forever(self, *args, **kwargs):
         while True:
             if self.auth_error:
                 raise TutumAuthError("Not authorized")
-            self.ws.run_forever()
+            self.ws.run_forever(*args, **kwargs)
