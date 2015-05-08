@@ -5,7 +5,7 @@ import tutum
 from .exceptions import TutumApiError, TutumAuthError
 
 
-def send_request(method, path, **kwargs):
+def send_request(method, path, inject_header=True, **kwargs):
     json = None
     url = urljoin(tutum.base_url, path.strip("/"))
     if not url.endswith("/"):
@@ -31,7 +31,7 @@ def send_request(method, path, **kwargs):
             # Try to parse the response.
             try:
                 json = response.json()
-                if response.headers:
+                if response.headers and inject_header:
                     json["tutum_action_uri"] = response.headers.get("X-Tutum-Action-URI", "")
             except Exception:
                 raise TutumApiError("JSON Parse Error (%s %s). Response: %s" % (method, url, response.text))
