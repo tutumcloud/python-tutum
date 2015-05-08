@@ -31,6 +31,8 @@ def send_request(method, path, **kwargs):
             # Try to parse the response.
             try:
                 json = response.json()
+                if response.headers:
+                    json["tutum_action_uri"] = response.headers.get("X-Tutum-Action-URI", "")
             except Exception:
                 raise TutumApiError("JSON Parse Error (%s %s). Response: %s" % (method, url, response.text))
         else:

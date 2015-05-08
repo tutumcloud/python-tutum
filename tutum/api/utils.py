@@ -8,7 +8,7 @@ from .service import Service
 from .stack import Stack
 from .volume import Volume
 from .volumegroup import VolumeGroup
-
+from .action import Action
 
 def is_uuid4(identifier):
     uuid4_regexp = re.compile('^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}', re.I)
@@ -28,7 +28,9 @@ class Utils:
         id = terms[-1]
         resource_type = terms[-2]
 
-        if resource_type.lower() == "container":
+        if resource_type.lower() == "action":
+            return Action.fetch(id)
+        elif resource_type.lower() == "container":
             return Container.fetch(id)
         elif resource_type.lower() == "node":
             return Node.fetch(id)
@@ -44,7 +46,7 @@ class Utils:
             return VolumeGroup.fetch(id)
         else:
             raise TutumApiError(
-                "Unsupported resource type. Only support: container, node, nodecluster, service, stack, volume, volumegroup")
+                "Unsupported resource type. Only support: action, container, node, nodecluster, service, stack, volume, volumegroup")
 
 
     @staticmethod
