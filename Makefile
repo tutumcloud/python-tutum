@@ -4,11 +4,11 @@ clean:
 
 prepare:clean
 	set -ex
-	pip install mock
-	pip install -r requirements.txt
-	python setup.py install
-	python3 setup.py install
+	virtualenv venv
+	venv/bin/pip install mock
+	venv/bin/pip install -r requirements.txt
+	venv/bin/python setup.py install
 
 test:prepare
-	python setup.py test
-	python3 setup.py test
+	venv/bin/python setup.py test
+

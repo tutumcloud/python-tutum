@@ -1,6 +1,7 @@
 import logging
 import os
 
+import requests
 from future.standard_library import install_aliases
 
 
@@ -23,8 +24,9 @@ from tutum.api.webhookhandler import WebhookHandler
 from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError
 from tutum.api.utils import Utils
+from tutum.api.events import TutumEvents
 
-__version__ = '0.14.1'
+__version__ = '0.14.2'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
@@ -41,4 +43,4 @@ tutum_auth = os.environ.get('TUTUM_AUTH', '')
 logging.basicConfig()
 logger = logging.getLogger("python-tutum")
 
-from tutum.api.events import TutumEvents
+requests.packages.urllib3.disable_warnings()

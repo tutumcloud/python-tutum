@@ -1,8 +1,11 @@
 import urllib
-import websocket
-import tutum
 import json
+
+import websocket
+
+import tutum
 from .exceptions import TutumAuthError
+
 
 class TutumEvents:
     def __init__(self):
@@ -20,6 +23,7 @@ class TutumEvents:
         self.message_handler = None
         self.error_handler = None
         self.close_handler = None
+        self.auth_error = False
 
     def _on_open(self, ws):
         if self.open_handler:
@@ -28,10 +32,14 @@ class TutumEvents:
     def _on_message(self, ws, message):
         try:
             event = json.loads(message)
-            if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
-                raise TutumAuthError("Not authorized")
         except ValueError:
-            pass
+            return
+
+        if event.get("type") == "error" and event.get("data", {}).get("errorMessage") == "UNAUTHORIZED":
+            self.auth_error = True
+            raise TutumAuthError("Not authorized")
+        if event.get("type") == "auth":
+            return
 
         if self.message_handler:
             self.message_handler(event)
@@ -56,6 +64,8 @@ class TutumEvents:
     def on_close(self, handler):
         self.close_handler = handler
 
-    def run_forever(self):
+    def run_forever(self, *args, **kwargs):
         while True:
-            self.ws.run_forever()
+            if self.auth_error:
+                raise TutumAuthError("Not authorized")
+            self.ws.run_forever(*args, **kwargs)
