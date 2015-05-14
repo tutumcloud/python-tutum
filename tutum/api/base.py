@@ -243,5 +243,5 @@ class Taggable(object):
     pass
 
 
-class Webhookable(object):
+class Triggerable(object):
     pass

@@ -1,7 +1,7 @@
-from .base import Mutable, Taggable, Webhookable
+from .base import Mutable, Taggable, Triggerable
 
 
-class Service(Mutable, Taggable, Webhookable):
+class Service(Mutable, Taggable, Triggerable):
     """Represents a Tutum Service object"""
 
     endpoint = "/service"
