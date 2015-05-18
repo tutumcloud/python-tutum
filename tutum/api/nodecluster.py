@@ -24,3 +24,11 @@ class NodeCluster(Mutable, Taggable):
             if key == "region" and isinstance(value, Region):
                 kwargs[key] = getattr(value, "resource_uri", "")
         return cls(**kwargs)
+
+    def upgrade_docker(self):
+        """upgrade docker on the nodeCluster.
+
+        :returns: bool -- whether or not the operation succeeded
+        :raises: TutumApiError
+        """
+        return self._perform_action("docker-upgrade")
