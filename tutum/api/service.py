@@ -30,6 +30,14 @@ class Service(Mutable, Taggable, Triggerable):
         """
         return self._perform_action("redeploy")
 
+    def scale(self):
+        """Scale the service in Tutum.
+
+        :returns: bool -- whether or not the operation succeeded
+        :raises: TutumApiError
+        """
+        return self._perform_action("scale")
+
     @property
     def logs(self):
         """Fetches and returns the logs for the service from Tutum
