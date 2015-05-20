@@ -1,7 +1,12 @@
 import json as json_parser
+import urllib
+import sys
 
+import websocket
+
+import tutum
 from .http import send_request
-from .exceptions import TutumApiError
+from .exceptions import TutumApiError, TutumAuthError
 
 
 class Restful(object):
@@ -245,3 +250,73 @@ class Taggable(object):
 
 class Triggerable(object):
     pass
+
+
+class StreamingAPI(object):
+    def __init__(self, endpoint):
+        self._ws_init(endpoint)
+
+    def _ws_init(self, endpoint):
+        url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
+        self.ws = websocket.WebSocketApp(url,
+                                         on_open=self._on_open,
+                                         on_message=self._on_message,
+                                         on_error=self._on_error,
+                                         on_close=self._on_close)
+        self.open_handler = None
+        self.message_handler = None
+        self.error_handler = None
+        self.close_handler = None
+        self.auth_error = False
+
+    def _on_open(self, ws):
+        if self.open_handler:
+            self.open_handler()
+
+    def _on_message(self, ws, message):
+        if self.message_handler:
+            self.message_handler(message)
+
+    def _on_error(self, ws, error):
+        if self.error_handler:
+            self.error_handler(error)
+
+    def _on_close(self, ws):
+        if self.close_handler:
+            self.close_handler()
+
+    def on_open(self, handler):
+        self.open_handler = handler
+
+    def on_message(self, handler):
+        self.message_handler = handler
+
+    def on_error(self, handler):
+        self.error_handler = handler
+
+    def on_close(self, handler):
+        self.close_handler = handler
+
+    def run_forever(self, *args, **kwargs):
+        while True:
+            if getattr(self, "auth_erorr", False):
+                raise TutumAuthError("Not authorized")
+            self.ws.run_forever(*args, **kwargs)
+
+
+class StreamingLog(StreamingAPI):
+    def __init__(self, obj_type, uuid):
+        if tutum.tutum_auth:
+            endpoint = "%s/%s/logs/?auth=%s" % (obj_type, uuid, urllib.quote_plus(tutum.tutum_auth))
+        else:
+            endpoint = "%s/%s/logs/?user=%s&token=%s" % (obj_type, uuid, tutum.user, tutum.apikey)
+        super(self.__class__, self).__init__(endpoint)
+
+    @staticmethod
+    def default_log_handler(message):
+        try:
+            logs = json_parser.loads(message)
+            sys.stdout.write(logs['log'])
+            sys.stdout.flush()
+        except:
+            return

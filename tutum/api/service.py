@@ -1,4 +1,4 @@
-from .base import Mutable, Taggable, Triggerable
+from .base import Mutable, Taggable, Triggerable, StreamingLog
 
 
 class Service(Mutable, Taggable, Triggerable):
@@ -38,11 +38,11 @@ class Service(Mutable, Taggable, Triggerable):
         """
         return self._perform_action("scale")
 
-    @property
-    def logs(self):
-        """Fetches and returns the logs for the service from Tutum
+    def logs(self, log_handler=StreamingLog.default_log_handler):
+        """Follow logs for the service from Tutum streaming API
 
-        :returns: string -- the current logs of the service
-        :raises: TutumApiError
+        :returns: None
         """
-        return self._expand_attribute("logs")
+        logs = StreamingLog("service", self.pk)
+        logs.on_message(log_handler)
+        logs.run_forever()
