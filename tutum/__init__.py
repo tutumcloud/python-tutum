@@ -26,7 +26,7 @@ from tutum.api.exceptions import TutumApiError, TutumAuthError
 from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 
-__version__ = '0.14.3'
+__version__ = '0.15.0'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
