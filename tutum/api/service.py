@@ -38,11 +38,11 @@ class Service(Mutable, Taggable, Triggerable):
         """
         return self._perform_action("scale")
 
-    def logs(self, log_handler=StreamingLog.default_log_handler):
+    def logs(self, tail, follow, log_handler=StreamingLog.default_log_handler):
         """Follow logs for the service from Tutum streaming API
 
         :returns: None
         """
-        logs = StreamingLog("service", self.pk)
+        logs = StreamingLog("service", self.pk, tail, follow)
         logs.on_message(log_handler)
         logs.run_forever()

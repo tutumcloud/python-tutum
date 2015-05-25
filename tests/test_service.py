@@ -54,12 +54,6 @@ class ServiceTestCase(unittest.TestCase):
         target = json.loads(json.dumps(attribute))
         self.assertDictEqual(target, result)
 
-    @mock.patch.object(tutum.api.http.Session, 'send')
-    def test_service_logs(self, mock_send):
-        target = "[mysql-1] 2014-09-30T22:44:31.385643366Z => An empty or uninitialized MySQL volume is detected in /var/lib/mysql\n[mysql-1] 2014-09-30T22:44:31.386200239Z => Installing MySQL ...\n"
-        mock_send.side_effect = [fake_resp(fake_service_fetch), fake_resp(fake_service_logs)]
-        service = tutum.Service.fetch('5ecde92d-498b-4bbb-b773-a998e5e421dc')
-        self.assertEqual(target, service.logs)
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_service_start(self, mock_send):

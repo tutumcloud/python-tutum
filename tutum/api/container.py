@@ -36,11 +36,11 @@ class Container(Mutable):
         """
         return self._perform_action("redeploy", data=json.dumps({"tag": tag}))
 
-    def logs(self, log_handler=StreamingLog.default_log_handler):
+    def logs(self, tail, follow, log_handler=StreamingLog.default_log_handler):
         """Follow logs for the container from Tutum streaming API
 
         :returns: None
         """
-        logs = StreamingLog("container", self.pk)
+        logs = StreamingLog("container", self.pk, tail, follow)
         logs.on_message(log_handler)
         logs.run_forever()

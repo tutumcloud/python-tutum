@@ -305,11 +305,16 @@ class StreamingAPI(object):
 
 
 class StreamingLog(StreamingAPI):
-    def __init__(self, obj_type, uuid):
+    def __init__(self, obj_type, uuid, tail, follow):
         if tutum.tutum_auth:
             endpoint = "%s/%s/logs/?auth=%s" % (obj_type, uuid, urllib.quote_plus(tutum.tutum_auth))
         else:
             endpoint = "%s/%s/logs/?user=%s&token=%s" % (obj_type, uuid, tutum.user, tutum.apikey)
+        if tail:
+            endpoint = "%s&tail=%d" % (endpoint, tail)
+        if not follow:
+            endpoint = "%s&follow=%s" % (endpoint, str(follow).lower())
+
         super(self.__class__, self).__init__(endpoint)
 
     @staticmethod
