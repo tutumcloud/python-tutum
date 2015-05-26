@@ -66,11 +66,3 @@ class ContainerTestCase(unittest.TestCase):
         result = json.loads(json.dumps(container.get_all_attributes()))
         target = json.loads(json.dumps(attribute))
         self.assertDictEqual(target, result)
-
-
-    @mock.patch.object(tutum.api.http.Session, 'send')
-    def test_container_logs(self, mock_send):
-        target = "2014-10-01T14:54:23.173185119Z => An empty or uninitialized MySQL volume is detected in /var/lib/mysql\n2014-10-01T14:54:23.173350403Z => Installing MySQL ...\n2014-10-01T14:54:23.467005403Z => Done!\n"
-        mock_send.side_effect = [fake_resp(fake_container_fetch), fake_resp(fake_container_logs)]
-        container = tutum.Container.fetch('5ecde92d-498b-4bbb-b773-a998e5e421dc')
-        self.assertEqual(target, container.logs)
