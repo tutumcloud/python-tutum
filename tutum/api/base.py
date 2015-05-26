@@ -325,3 +325,6 @@ class StreamingLog(StreamingAPI):
             sys.stdout.flush()
         except:
             return
+
+    def run_forever(self, *args, **kwargs):
+        self.ws.run_forever(*args, **kwargs)
