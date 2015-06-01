@@ -22,11 +22,11 @@ from tutum.api.volume import Volume
 from tutum.api.volumegroup import VolumeGroup
 from tutum.api.trigger import Trigger
 from tutum.api.stack import Stack
-from tutum.api.exceptions import TutumApiError, TutumAuthError
+from tutum.api.exceptions import TutumApiError, TutumAuthError, ObjectNotFound, NonUniqueIdentifier
 from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 
-__version__ = '0.15.0.1'
+__version__ = '0.15.1'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
