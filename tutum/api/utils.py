@@ -49,7 +49,6 @@ class Utils:
             raise TutumApiError(
                 "Unsupported resource type. Only support: action, container, node, nodecluster, service, stack, volume, volumegroup")
 
-
     @staticmethod
     def fetch_remote_container(identifier, raise_exceptions=True):
         try:
@@ -59,8 +58,12 @@ class Utils:
                 except Exception:
                     raise ObjectNotFound("Cannot find a container with the identifier '%s'" % identifier)
             else:
-                objects_same_identifier = Container.list(uuid__startswith=identifier) or \
-                                          Container.list(name=identifier)
+                if "." in identifier:
+                    terms = identifier.split(".", 2)
+                    objects_same_identifier = Container.list(service__stack__name=terms[0], name=terms[1])
+                else:
+                    objects_same_identifier = Container.list(uuid__startswith=identifier) or \
+                                              Container.list(name=identifier)
                 if len(objects_same_identifier) == 1:
                     uuid = objects_same_identifier[0].uuid
                     return Container.fetch(uuid)
