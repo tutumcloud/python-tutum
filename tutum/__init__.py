@@ -22,7 +22,7 @@ from tutum.api.volume import Volume
 from tutum.api.volumegroup import VolumeGroup
 from tutum.api.trigger import Trigger
 from tutum.api.stack import Stack
-from tutum.api.exceptions import TutumApiError, TutumAuthError
+from tutum.api.exceptions import TutumApiError, TutumAuthError, ObjectNotFound, NonUniqueIdentifier
 from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 
