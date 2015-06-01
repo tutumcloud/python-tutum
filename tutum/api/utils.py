@@ -64,6 +64,7 @@ class Utils:
                 else:
                     objects_same_identifier = Container.list(uuid__startswith=identifier) or \
                                               Container.list(name=identifier)
+
                 if len(objects_same_identifier) == 1:
                     uuid = objects_same_identifier[0].uuid
                     return Container.fetch(uuid)
@@ -85,8 +86,12 @@ class Utils:
                 except Exception:
                     raise ObjectNotFound("Cannot find a service with the identifier '%s'" % identifier)
             else:
-                objects_same_identifier = Service.list(uuid__startswith=identifier) or \
-                                          Service.list(name=identifier)
+                if "." in identifier:
+                    terms = identifier.split(".", 2)
+                    objects_same_identifier = Service.list(service__stack__name=terms[0], name=terms[1])
+                else:
+                    objects_same_identifier = Service.list(uuid__startswith=identifier) or \
+                                              Service.list(name=identifier)
 
                 if len(objects_same_identifier) == 1:
                     uuid = objects_same_identifier[0].uuid
