@@ -320,9 +320,17 @@ class StreamingLog(StreamingAPI):
     @staticmethod
     def default_log_handler(message):
         try:
-            logs = json_parser.loads(message)
-            sys.stdout.write(logs['log'])
-            sys.stdout.flush()
+            msg = json_parser.loads(message)
+            out = sys.stdout
+            if msg.get("streamType", None) == "stderr":
+                out = sys.stderr
+
+            log = msg["log"]
+            source = msg.get("source", None)
+            if source:
+                log = " | ".join([source, log])
+            out.write(log)
+            out.flush()
         except:
             return
 
