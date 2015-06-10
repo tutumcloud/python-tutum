@@ -24,6 +24,7 @@ from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError, ObjectNotFound, NonUniqueIdentifier
 from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
+from tutum.api.nodeaz import AZ
 
 __version__ = '0.15.1.1'
 
