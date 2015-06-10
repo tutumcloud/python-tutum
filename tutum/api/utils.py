@@ -29,18 +29,18 @@ class Utils:
         id = terms[-1]
         resource_type = terms[-2]
 
-        if resource_type.lower() == "action":
-            return Action.fetch(id)
-        elif resource_type.lower() == "container":
+        if resource_type.lower() == "container":
             return Container.fetch(id)
-        elif resource_type.lower() == "node":
-            return Node.fetch(id)
-        elif resource_type.lower() == "nodecluster":
-            return NodeCluster.fetch(id)
         elif resource_type.lower() == "service":
             return Service.fetch(id)
         elif resource_type.lower() == "stack":
             return Stack.fetch(id)
+        elif resource_type.lower() == "node":
+            return Node.fetch(id)
+        elif resource_type.lower() == "nodecluster":
+            return NodeCluster.fetch(id)
+        elif resource_type.lower() == "action":
+            return Action.fetch(id)
         elif resource_type.lower() == "volume":
             return Volume.fetch(id)
         elif resource_type.lower() == "volumegroup":
@@ -212,6 +212,29 @@ class Utils:
                     raise ObjectNotFound("Cannot find a node cluster with the identifier '%s'" % identifier)
                 raise NonUniqueIdentifier(
                     "More than one node cluster has the same identifier, please use the long uuid")
+
+        except (NonUniqueIdentifier, ObjectNotFound) as e:
+            if not raise_exceptions:
+                return e
+            raise e
+
+    @staticmethod
+    def fetch_remote_action(identifier, raise_exceptions=True):
+        try:
+            if is_uuid4(identifier):
+                try:
+                    return Action.fetch(identifier)
+                except Exception:
+                    raise ObjectNotFound("Cannot find an action with the identifier '%s'" % identifier)
+            else:
+                objects_same_identifier = Action.list(uuid__startswith=identifier)
+                if len(objects_same_identifier) == 1:
+                    uuid = objects_same_identifier[0].uuid
+                    return Action.fetch(uuid)
+                elif len(objects_same_identifier) == 0:
+                    raise ObjectNotFound("Cannot find an action cluster with the identifier '%s'" % identifier)
+                raise NonUniqueIdentifier(
+                    "More than one action has the same identifier, please use the long uuid")
 
         except (NonUniqueIdentifier, ObjectNotFound) as e:
             if not raise_exceptions:

@@ -1,7 +1,6 @@
 import unittest
 
 import unittest.mock as mock
-
 import tutum
 from .fake_api import *
 

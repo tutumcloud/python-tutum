@@ -20,7 +20,6 @@ class Tag(object):
 
         self.taggable.__addchanges__('tags')
 
-
     @classmethod
     def create(cls, **kwargs):
         """Returns a new instance of the model (without saving it) with the attributes specified in ``kwargs``
@@ -55,7 +54,6 @@ class Tag(object):
                 self.taggable.tags.remove(_tag)
             self.taggable.__addchanges__('tags')
 
-
     def delete(self, tagname):
         """delete a tag or a list of tags from Tutum.
 
@@ -69,7 +67,6 @@ class Tag(object):
 
         self.remove(tagname)
         return self.save()
-
 
     @classmethod
     def fetch(cls, taggable):

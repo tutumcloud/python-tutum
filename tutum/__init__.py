@@ -4,7 +4,6 @@ import os
 import requests
 from future.standard_library import install_aliases
 
-
 install_aliases()
 
 from tutum.api import auth

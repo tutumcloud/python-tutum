@@ -1,9 +1,9 @@
 import unittest
 
 import unittest.mock as mock
-
 import tutum
 from tutum.api.exceptions import ObjectNotFound, TutumApiError, NonUniqueIdentifier
+
 
 class FetchRemoteObjectTestCase(unittest.TestCase):
     @mock.patch('tutum.Container.list')
@@ -16,8 +16,10 @@ class FetchRemoteObjectTestCase(unittest.TestCase):
 
         # test container doesn't exist queried with uuid4
         mock_fetch.side_effect = ObjectNotFound
-        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_container, '7A4CFE51-03BB-42D6-825E-3B533888D8CD', True)
-        self.assertIsInstance(tutum.Utils.fetch_remote_container('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False), ObjectNotFound)
+        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_container, '7A4CFE51-03BB-42D6-825E-3B533888D8CD',
+                          True)
+        self.assertIsInstance(tutum.Utils.fetch_remote_container('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
+                              ObjectNotFound)
 
         # test unique container found queried with short uuid
         container = tutum.Container.create()
@@ -68,8 +70,10 @@ class FetchRemoteObjectTestCase(unittest.TestCase):
 
         # test cluster doesn't exist queried with uuid4
         mock_fetch.side_effect = ObjectNotFound
-        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_service, '7A4CFE51-03BB-42D6-825E-3B533888D8CD', True)
-        self.assertIsInstance(tutum.Utils.fetch_remote_service('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False), ObjectNotFound)
+        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_service, '7A4CFE51-03BB-42D6-825E-3B533888D8CD',
+                          True)
+        self.assertIsInstance(tutum.Utils.fetch_remote_service('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
+                              ObjectNotFound)
 
         # test unique cluster found queried with short uuid
         service = tutum.Service.create()
@@ -121,7 +125,8 @@ class FetchRemoteObjectTestCase(unittest.TestCase):
         # test node doesn't exist queried with uuid4
         mock_fetch.side_effect = ObjectNotFound
         self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_node, '7A4CFE51-03BB-42D6-825E-3B533888D8CD', True)
-        self.assertIsInstance(tutum.Utils.fetch_remote_node('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False), ObjectNotFound)
+        self.assertIsInstance(tutum.Utils.fetch_remote_node('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
+                              ObjectNotFound)
 
 
         # test unique node found queried with short uuid
@@ -157,12 +162,15 @@ class FetchRemoteObjectTestCase(unittest.TestCase):
         # test nodecluster exist queried with uuid4
         mock_fetch.return_value = 'returned'
         self.assertEqual(tutum.Utils.fetch_remote_nodecluster('7A4CFE51-03BB-42D6-825E-3B533888D8CD', True), 'returned')
-        self.assertEqual(tutum.Utils.fetch_remote_nodecluster('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False), 'returned')
+        self.assertEqual(tutum.Utils.fetch_remote_nodecluster('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
+                         'returned')
 
         # test nodecluster doesn't exist queried with uuid4
         mock_fetch.side_effect = ObjectNotFound
-        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_nodecluster, '7A4CFE51-03BB-42D6-825E-3B533888D8CD', True)
-        self.assertIsInstance(tutum.Utils.fetch_remote_nodecluster('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False), ObjectNotFound)
+        self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_nodecluster, '7A4CFE51-03BB-42D6-825E-3B533888D8CD',
+                          True)
+        self.assertIsInstance(tutum.Utils.fetch_remote_nodecluster('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
+                              ObjectNotFound)
 
         # test unique nodecluster found queried with short uuid
         nodecluster = tutum.NodeCluster.create()

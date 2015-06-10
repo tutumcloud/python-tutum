@@ -1,9 +1,9 @@
 import unittest
-import urllib.parse
 
-import unittest.mock as mock
 import requests
 
+import urllib.parse
+import unittest.mock as mock
 import tutum
 from .fake_api import fake_resp
 from tutum.api.base import send_request

@@ -1,12 +1,14 @@
 import json as json_parser
 import urllib
-import sys
+import logging
 
 import websocket
 
 import tutum
 from .http import send_request
 from .exceptions import TutumApiError, TutumAuthError
+
+logger = logging.getLogger("python-tutum")
 
 
 class Restful(object):
@@ -126,7 +128,7 @@ class Immutable(Restful):
         return instance
 
     @classmethod
-    def list(cls, **kwargs):
+    def list(cls, limit=None, **kwargs):
         """List all objects for the authenticated user, optionally filtered by ``kwargs``
 
         :returns: list -- a list of objects that match the query
@@ -137,19 +139,22 @@ class Immutable(Restful):
 
         objects = []
         while True:
+            if limit and len(objects) >= limit:
+                break
             json = send_request('GET', endpoint, params=kwargs)
             objs = json.get('objects', [])
             meta = json.get('meta', {})
             next_url = meta.get('next', '')
             offset = meta.get('offset', 0)
-            limit = meta.get('limit', 0)
+            api_limit = meta.get('limit', 0)
             objects.extend(objs)
             if next_url:
-                kwargs['offset'] = offset + limit
-                kwargs['limit'] = limit
+                kwargs['offset'] = offset + api_limit
+                kwargs['limit'] = api_limit
             else:
                 break
-
+        if limit:
+            objects = objects[:limit]
         for obj in objects:
             instance = cls()
             instance._loaddict(obj)
@@ -258,6 +263,7 @@ class StreamingAPI(object):
 
     def _ws_init(self, endpoint):
         url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
+        logger.info("websocket: %s" % url)
         self.ws = websocket.WebSocketApp(url,
                                          on_open=self._on_open,
                                          on_message=self._on_message,
@@ -298,6 +304,7 @@ class StreamingAPI(object):
         self.close_handler = handler
 
     def run_forever(self, *args, **kwargs):
+
         while True:
             if getattr(self, "auth_erorr", False):
                 raise TutumAuthError("Not authorized")
@@ -319,20 +326,7 @@ class StreamingLog(StreamingAPI):
 
     @staticmethod
     def default_log_handler(message):
-        try:
-            msg = json_parser.loads(message)
-            out = sys.stdout
-            if msg.get("streamType", None) == "stderr":
-                out = sys.stderr
-
-            log = msg["log"]
-            source = msg.get("source", None)
-            if source:
-                log = " | ".join([source, log])
-            out.write(log)
-            out.flush()
-        except:
-            return
+        print message
 
     def run_forever(self, *args, **kwargs):
         self.ws.run_forever(*args, **kwargs)
