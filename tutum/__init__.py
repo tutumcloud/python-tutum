@@ -41,6 +41,8 @@ stream_url = os.environ.get('TUTUM_STREAM_URL', 'wss://stream.tutum.co/v1/')
 
 tutum_auth = os.environ.get('TUTUM_AUTH', '')
 
+user_agent = None
+
 logging.basicConfig()
 logger = logging.getLogger("python-tutum")
 
