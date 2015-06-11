@@ -263,8 +263,13 @@ class StreamingAPI(object):
 
     def _ws_init(self, endpoint):
         url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
-        logger.info("websocket: %s" % url)
-        self.ws = websocket.WebSocketApp(url,
+
+        user_agent = 'python-tutum/%s' % tutum.__version__
+        if tutum.user_agent:
+            user_agent = "%s %s" % (tutum.user_agent, user_agent)
+        header = {'User-Agent': user_agent}
+        logger.info("websocket: %s %s" % (url, header))
+        self.ws = websocket.WebSocketApp(url, header=header,
                                          on_open=self._on_open,
                                          on_message=self._on_message,
                                          on_error=self._on_error,
