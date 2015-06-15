@@ -16,7 +16,7 @@ class SendRequestTestCase(unittest.TestCase):
         json_obj = {'key': 'value'}
         mock_send.return_value = fake_resp(lambda: (None, json_obj))
         self.assertRaises(tutum.TutumApiError, send_request, 'METHOD', 'path', data='data')
-        headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v%s' % tutum.__version__}
+        headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/%s' % tutum.__version__}
         headers.update(tutum.auth.get_auth_header())
         mock_Request.assert_called_with('METHOD', urllib.parse.urljoin(tutum.base_url, 'path/'),
                                         headers=headers, data='data')

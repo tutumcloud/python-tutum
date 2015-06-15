@@ -60,7 +60,7 @@ class Utils:
             else:
                 if "." in identifier:
                     terms = identifier.split(".", 2)
-                    objects_same_identifier = Container.list(service__stack__name=terms[0], name=terms[1])
+                    objects_same_identifier = Container.list(name=terms[0], service__stack__name=terms[1])
                 else:
                     objects_same_identifier = Container.list(uuid__startswith=identifier) or \
                                               Container.list(name=identifier)
@@ -88,7 +88,7 @@ class Utils:
             else:
                 if "." in identifier:
                     terms = identifier.split(".", 2)
-                    objects_same_identifier = Service.list(stack__name=terms[0], name=terms[1])
+                    objects_same_identifier = Service.list(name=terms[0], stack__name=terms[1])
                 else:
                     objects_same_identifier = Service.list(uuid__startswith=identifier) or \
                                               Service.list(name=identifier)
