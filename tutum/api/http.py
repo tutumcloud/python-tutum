@@ -16,7 +16,7 @@ def send_request(method, path, inject_header=True, **kwargs):
     # construct headers
     headers = {'Content-Type': 'application/json', 'User-Agent': user_agent}
     headers.update(tutum.auth.get_auth_header())
-    tutum.logger.info("%s %s %s %s" % (method, url, headers, kwargs.get('data', '')))
+    tutum.logger.info("%s %s %s %s" % (method, url, headers, kwargs))
     # construct request
     s = Session()
     req = Request(method, url, headers=headers, **kwargs)
