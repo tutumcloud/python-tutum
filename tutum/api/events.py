@@ -1,6 +1,8 @@
 import urllib
 import json
 
+import websocket
+
 import tutum
 from .exceptions import TutumAuthError
 from .base import StreamingAPI
@@ -33,4 +35,9 @@ class TutumEvents(StreamingAPI):
         while True:
             if self.auth_error:
                 raise TutumAuthError("Not authorized")
-            self.ws.run_forever(*args, **kwargs)
+            ws = websocket.WebSocketApp(self.url, header=self.header,
+                                        on_open=self._on_open,
+                                        on_message=self._on_message,
+                                        on_error=self._on_error,
+                                        on_close=self._on_close)
+            ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)

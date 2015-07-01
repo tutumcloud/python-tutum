@@ -262,18 +262,13 @@ class StreamingAPI(object):
         self._ws_init(endpoint)
 
     def _ws_init(self, endpoint):
-        url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
+        self.url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
 
         user_agent = 'python-tutum/%s' % tutum.__version__
         if tutum.user_agent:
             user_agent = "%s %s" % (tutum.user_agent, user_agent)
-        header = {'User-Agent': user_agent}
-        logger.info("websocket: %s %s" % (url, header))
-        self.ws = websocket.WebSocketApp(url, header=header,
-                                         on_open=self._on_open,
-                                         on_message=self._on_message,
-                                         on_error=self._on_error,
-                                         on_close=self._on_close)
+        self.header = {'User-Agent': user_agent}
+        logger.info("websocket: %s %s" % (self.url, self.header))
         self.open_handler = None
         self.message_handler = None
         self.error_handler = None
@@ -309,11 +304,15 @@ class StreamingAPI(object):
         self.close_handler = handler
 
     def run_forever(self, *args, **kwargs):
-
         while True:
-            if getattr(self, "auth_erorr", False):
+            if getattr(self, "auth_error", False):
                 raise TutumAuthError("Not authorized")
-            self.ws.run_forever(*args, **kwargs)
+            ws = websocket.WebSocketApp(self.url, header=self.header,
+                                        on_open=self._on_open,
+                                        on_message=self._on_message,
+                                        on_error=self._on_error,
+                                        on_close=self._on_close)
+            ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)
 
 
 class StreamingLog(StreamingAPI):
@@ -334,4 +333,9 @@ class StreamingLog(StreamingAPI):
         print message
 
     def run_forever(self, *args, **kwargs):
-        self.ws.run_forever(*args, **kwargs)
+        ws = websocket.WebSocketApp(self.url, header=self.header,
+                                    on_open=self._on_open,
+                                    on_message=self._on_message,
+                                    on_error=self._on_error,
+                                    on_close=self._on_close)
+        ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)
