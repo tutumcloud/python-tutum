@@ -1,10 +1,10 @@
 import os
 import tempfile
 import unittest
+
 import configparser
 
 import unittest.mock as mock
-
 import tutum
 from .fake_api import *
 
@@ -21,7 +21,6 @@ class AuthTestCase(unittest.TestCase):
     def test_baseurl(self):
         self.assertTrue(tutum.base_url)
 
-
     @mock.patch('tutum.api.auth.get_auth')
     def test_auth_authenticate(self, mock_get_auth):
         mock_get_auth.return_value = (FAKE_USER, FAKE_APIKEY)
@@ -36,7 +35,6 @@ class AuthTestCase(unittest.TestCase):
         user, apikey = tutum.auth.get_auth(FAKE_USER, FAKE_PASSWORD)
         self.assertEqual(FAKE_USER, user)
         self.assertEqual(FAKE_APIKEY, apikey)
-
 
     def test_auth_is_authenticated(self):
         tutum.user = FAKE_USER

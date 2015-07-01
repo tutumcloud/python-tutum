@@ -4,7 +4,6 @@ import os
 import requests
 from future.standard_library import install_aliases
 
-
 install_aliases()
 
 from tutum.api import auth
@@ -25,8 +24,9 @@ from tutum.api.stack import Stack
 from tutum.api.exceptions import TutumApiError, TutumAuthError, ObjectNotFound, NonUniqueIdentifier
 from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
+from tutum.api.nodeaz import AZ
 
-__version__ = '0.15.1.1'
+__version__ = '0.16.0'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
@@ -40,6 +40,8 @@ domain = base_url.replace("/api/v1/", "/")
 stream_url = os.environ.get('TUTUM_STREAM_URL', 'wss://stream.tutum.co/v1/')
 
 tutum_auth = os.environ.get('TUTUM_AUTH', '')
+
+user_agent = None
 
 logging.basicConfig()
 logger = logging.getLogger("python-tutum")

@@ -10,10 +10,13 @@ def send_request(method, path, inject_header=True, **kwargs):
     url = urljoin(tutum.base_url, path.strip("/"))
     if not url.endswith("/"):
         url = "%s/" % url
-    tutum.logger.info("%s %s %s" % (method, url, kwargs.get('data', '')))
+    user_agent = 'python-tutum/%s' % tutum.__version__
+    if tutum.user_agent:
+        user_agent = "%s %s" % (tutum.user_agent, user_agent)
     # construct headers
-    headers = {'Content-Type': 'application/json', 'User-Agent': 'python-tutum/v%s' % tutum.__version__}
+    headers = {'Content-Type': 'application/json', 'User-Agent': user_agent}
     headers.update(tutum.auth.get_auth_header())
+    tutum.logger.info("%s %s %s %s" % (method, url, headers, kwargs))
     # construct request
     s = Session()
     req = Request(method, url, headers=headers, **kwargs)

@@ -1,12 +1,14 @@
 import json as json_parser
 import urllib
-import sys
+import logging
 
 import websocket
 
 import tutum
 from .http import send_request
 from .exceptions import TutumApiError, TutumAuthError
+
+logger = logging.getLogger("python-tutum")
 
 
 class Restful(object):
@@ -126,7 +128,7 @@ class Immutable(Restful):
         return instance
 
     @classmethod
-    def list(cls, **kwargs):
+    def list(cls, limit=None, **kwargs):
         """List all objects for the authenticated user, optionally filtered by ``kwargs``
 
         :returns: list -- a list of objects that match the query
@@ -137,19 +139,22 @@ class Immutable(Restful):
 
         objects = []
         while True:
+            if limit and len(objects) >= limit:
+                break
             json = send_request('GET', endpoint, params=kwargs)
             objs = json.get('objects', [])
             meta = json.get('meta', {})
             next_url = meta.get('next', '')
             offset = meta.get('offset', 0)
-            limit = meta.get('limit', 0)
+            api_limit = meta.get('limit', 0)
             objects.extend(objs)
             if next_url:
-                kwargs['offset'] = offset + limit
-                kwargs['limit'] = limit
+                kwargs['offset'] = offset + api_limit
+                kwargs['limit'] = api_limit
             else:
                 break
-
+        if limit:
+            objects = objects[:limit]
         for obj in objects:
             instance = cls()
             instance._loaddict(obj)
@@ -257,12 +262,13 @@ class StreamingAPI(object):
         self._ws_init(endpoint)
 
     def _ws_init(self, endpoint):
-        url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
-        self.ws = websocket.WebSocketApp(url,
-                                         on_open=self._on_open,
-                                         on_message=self._on_message,
-                                         on_error=self._on_error,
-                                         on_close=self._on_close)
+        self.url = "/".join([tutum.stream_url.rstrip("/"), endpoint.lstrip('/')])
+
+        user_agent = 'python-tutum/%s' % tutum.__version__
+        if tutum.user_agent:
+            user_agent = "%s %s" % (tutum.user_agent, user_agent)
+        self.header = {'User-Agent': user_agent}
+        logger.info("websocket: %s %s" % (self.url, self.header))
         self.open_handler = None
         self.message_handler = None
         self.error_handler = None
@@ -299,9 +305,14 @@ class StreamingAPI(object):
 
     def run_forever(self, *args, **kwargs):
         while True:
-            if getattr(self, "auth_erorr", False):
+            if getattr(self, "auth_error", False):
                 raise TutumAuthError("Not authorized")
-            self.ws.run_forever(*args, **kwargs)
+            ws = websocket.WebSocketApp(self.url, header=self.header,
+                                        on_open=self._on_open,
+                                        on_message=self._on_message,
+                                        on_error=self._on_error,
+                                        on_close=self._on_close)
+            ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)
 
 
 class StreamingLog(StreamingAPI):
@@ -319,12 +330,12 @@ class StreamingLog(StreamingAPI):
 
     @staticmethod
     def default_log_handler(message):
-        try:
-            logs = json_parser.loads(message)
-            sys.stdout.write(logs['log'])
-            sys.stdout.flush()
-        except:
-            return
+        print message
 
     def run_forever(self, *args, **kwargs):
-        self.ws.run_forever(*args, **kwargs)
+        ws = websocket.WebSocketApp(self.url, header=self.header,
+                                    on_open=self._on_open,
+                                    on_message=self._on_message,
+                                    on_error=self._on_error,
+                                    on_close=self._on_close)
+        ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)

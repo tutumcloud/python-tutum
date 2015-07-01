@@ -3,7 +3,6 @@ import datetime
 
 import requests
 
-
 FAKE_USER = 'fake_tutum_user'
 FAKE_PASSWORD = 'fake_tutum_password'
 FAKE_APIKEY = 'dff93a893ec78e4305ff57c75721f38bdc8384f6'

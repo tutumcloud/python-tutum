@@ -6,7 +6,7 @@ try:
     from unittest import mock
 except ImportError:
     import sys
+
     sys.modules['unittest'] = __import__('unittest')
     sys.modules['unittest.mock'] = __import__('mock')
     setattr(sys.modules['unittest'], 'mock', __import__('mock'))
-

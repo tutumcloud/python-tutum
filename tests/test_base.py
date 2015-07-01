@@ -2,7 +2,6 @@ import unittest
 import json
 
 import unittest.mock as mock
-
 import tutum
 from tutum.api.base import Restful, Mutable, Immutable
 
@@ -89,7 +88,6 @@ class RestfulTestCase(unittest.TestCase):
         finally:
             if hasattr(Restful, 'endpoint'):
                 delattr(Restful, 'endpoint')
-
 
     @mock.patch('tutum.api.base.send_request')
     def test_restful_expand_attribute(self, mock_send_request):

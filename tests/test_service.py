@@ -1,7 +1,6 @@
 import unittest
 
 import unittest.mock as mock
-
 import tutum
 from .fake_api import *
 
@@ -53,7 +52,6 @@ class ServiceTestCase(unittest.TestCase):
         result = json.loads(json.dumps(service.get_all_attributes()))
         target = json.loads(json.dumps(attribute))
         self.assertDictEqual(target, result)
-
 
     @mock.patch.object(tutum.api.http.Session, 'send')
     def test_service_start(self, mock_send):
