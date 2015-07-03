@@ -1,3 +1,5 @@
-requests==2.5.3
+backports.ssl-match-hostname==3.4.0.2
 future==0.14.3
+requests==2.7.0
+six==1.9.0
 websocket-client==0.32.0
