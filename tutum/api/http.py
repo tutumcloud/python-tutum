@@ -1,4 +1,5 @@
 from requests import Request, Session
+from requests import utils
 
 from urllib.parse import urljoin
 import tutum
@@ -20,8 +21,11 @@ def send_request(method, path, inject_header=True, **kwargs):
     # construct request
     s = Session()
     req = Request(method, url, headers=headers, **kwargs)
+    # get environment proxies
+    env_proxies = utils.get_environ_proxies(url) or {}
+    kw_args = {'proxies': env_proxies}
     # make the request
-    response = s.send(req.prepare())
+    response = s.send(req.prepare(), **kw_args)
     status_code = getattr(response, 'status_code', None)
     tutum.logger.info("Status: %s" % str(status_code))
     # handle the response
