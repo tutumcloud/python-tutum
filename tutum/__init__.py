@@ -35,9 +35,11 @@ user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
 apikey = os.environ.get('TUTUM_APIKEY', None) or auth.load_from_file()[1]
 
 #: The API endpoint to use
-base_url = os.environ.get('TUTUM_BASE_URL', "https://dashboard.tutum.co/api/v1/")
-domain = base_url.replace("/api/v1/", "/")
-stream_url = os.environ.get('TUTUM_STREAM_URL', 'wss://stream.tutum.co/v1/')
+rest_host = os.environ.get('TUTUM_REST_HOST', 'https://dashboard.tutum.co')
+stream_host = os.environ.get('TUTUM_STREAM_HOST', 'wss://stream.tutum.co')
+
+base_url = os.environ.get('TUTUM_BASE_URL', "/".join([rest_host.rstrip("/"), "api/v1/"]))
+stream_url = os.environ.get('TUTUM_STREAM_URL',  "/".join([stream_host.rstrip("/"), "v1/"]))
 
 tutum_auth = os.environ.get('TUTUM_AUTH', '')
 
