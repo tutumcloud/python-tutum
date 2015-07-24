@@ -10,6 +10,7 @@ from tutum.api import auth
 from tutum.api.service import Service
 from tutum.api.container import Container
 from tutum.api.image import Image
+from tutum.api.imagetag import ImageTag
 from tutum.api.node import Node
 from tutum.api.action import Action
 from tutum.api.nodecluster import NodeCluster
