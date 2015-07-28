@@ -10,6 +10,7 @@ from tutum.api import auth
 from tutum.api.service import Service
 from tutum.api.container import Container
 from tutum.api.image import Image
+from tutum.api.imagetag import ImageTag
 from tutum.api.node import Node
 from tutum.api.action import Action
 from tutum.api.nodecluster import NodeCluster
@@ -26,7 +27,7 @@ from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 from tutum.api.nodeaz import AZ
 
-__version__ = '0.16.0.1'
+__version__ = '0.16.21'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
@@ -35,9 +36,11 @@ user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]
 apikey = os.environ.get('TUTUM_APIKEY', None) or auth.load_from_file()[1]
 
 #: The API endpoint to use
-base_url = os.environ.get('TUTUM_BASE_URL', "https://dashboard.tutum.co/api/v1/")
-domain = base_url.replace("/api/v1/", "/")
-stream_url = os.environ.get('TUTUM_STREAM_URL', 'wss://stream.tutum.co/v1/')
+rest_host = os.environ.get('TUTUM_REST_HOST', 'https://dashboard.tutum.co')
+stream_host = os.environ.get('TUTUM_STREAM_HOST', 'wss://stream.tutum.co')
+
+base_url = os.environ.get('TUTUM_BASE_URL', "/".join([rest_host.rstrip("/"), "api/v1/"]))
+stream_url = os.environ.get('TUTUM_STREAM_URL',  "/".join([stream_host.rstrip("/"), "v1/"]))
 
 tutum_auth = os.environ.get('TUTUM_AUTH', '')
 
