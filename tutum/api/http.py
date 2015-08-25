@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from requests import Request, Session
 from requests import utils
 

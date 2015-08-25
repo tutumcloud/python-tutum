@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from .exceptions import TutumApiError
 from .http import send_request
 import tutum
