@@ -11,4 +11,3 @@ prepare:clean
 
 test:prepare
 	venv/bin/python setup.py test
-
