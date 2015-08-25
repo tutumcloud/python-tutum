@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from .base import Mutable
 from .exceptions import TutumApiError
-from http import send_request
+from .http import send_request
 
 
 class Stack(Mutable):
