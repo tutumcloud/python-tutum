@@ -1,3 +1,4 @@
+from __future__ import absolute_import, print_function
 import json as json_parser
 import urllib
 import logging
@@ -330,7 +331,7 @@ class StreamingLog(StreamingAPI):
 
     @staticmethod
     def default_log_handler(message):
-        print message
+        print(message)
 
     def run_forever(self, *args, **kwargs):
         ws = websocket.WebSocketApp(self.url, header=self.header,
