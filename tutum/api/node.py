@@ -27,3 +27,11 @@ class Node(Mutable, Taggable):
         :raises: TutumApiError
         """
         return self._perform_action("docker-upgrade")
+
+    def health_check(self):
+        """Perform a health check of a node
+
+        :returns: bool -- whether or not the operation succeeded
+        :raises: TutumApiError
+        """
+        return self._perform_action("health-check")
