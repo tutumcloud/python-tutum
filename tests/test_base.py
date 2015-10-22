@@ -80,9 +80,9 @@ class RestfulTestCase(unittest.TestCase):
             Restful.endpoint = 'fake'
             model._detail_uri = 'fake/uuid'
             mock_send_request.side_effect = [{'key': 'value'}, None]
-            self.assertTrue(model._perform_action('action', {'key': 'value'}))
+            self.assertTrue(model._perform_action('action', params={'k': 'v'}, data={'key': 'value'}))
             self.assertEqual('value', model.key)
-            mock_send_request.assert_called_with('POST', 'fake/uuid/action', data={'key': 'value'})
+            mock_send_request.assert_called_with('POST', 'fake/uuid/action', data={'key': 'value'}, params={'k': 'v'})
 
             self.assertFalse(model._perform_action('action', {'key': 'value'}))
 
