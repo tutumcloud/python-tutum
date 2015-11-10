@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from .base import Mutable, Taggable, Triggerable, StreamingLog
 
 
@@ -22,13 +23,14 @@ class Service(Mutable, Taggable, Triggerable):
         """
         return self._perform_action("stop")
 
-    def redeploy(self):
+    def redeploy(self, reuse_volumes=True):
         """Redeploy the service in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
-        return self._perform_action("redeploy")
+        params = {'reuse_volumes': reuse_volumes}
+        return self._perform_action("redeploy", params=params)
 
     def scale(self):
         """Scale the service in Tutum.

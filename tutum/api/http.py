@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from requests import Request, Session
 from requests import utils
 
@@ -17,7 +19,7 @@ def send_request(method, path, inject_header=True, **kwargs):
     # construct headers
     headers = {'Content-Type': 'application/json', 'User-Agent': user_agent}
     headers.update(tutum.auth.get_auth_header())
-    tutum.logger.info("%s %s %s %s" % (method, url, headers, kwargs))
+    tutum.logger.info("Request: %s %s %s %s" % (method, url, headers, kwargs))
     # construct request
     s = Session()
     req = Request(method, url, headers=headers, **kwargs)
@@ -27,7 +29,7 @@ def send_request(method, path, inject_header=True, **kwargs):
     # make the request
     response = s.send(req.prepare(), **kw_args)
     status_code = getattr(response, 'status_code', None)
-    tutum.logger.info("Status: %s" % str(status_code))
+    tutum.logger.info("Response: Status %s" % str(status_code))
     # handle the response
     if not status_code:
         # Most likely network trouble

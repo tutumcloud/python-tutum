@@ -1,4 +1,4 @@
-import json
+from __future__ import absolute_import
 
 from .base import Mutable, StreamingLog
 
@@ -28,13 +28,14 @@ class Container(Mutable):
         """
         return self._perform_action("stop")
 
-    def redeploy(self, tag=None):
+    def redeploy(self, reuse_volumes=True):
         """Redeploy the container in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
-        return self._perform_action("redeploy", data=json.dumps({"tag": tag}))
+        params = {'reuse_volumes': reuse_volumes}
+        return self._perform_action("redeploy", params=params)
 
     def logs(self, tail, follow, log_handler=StreamingLog.default_log_handler):
         """Follow logs for the container from Tutum streaming API

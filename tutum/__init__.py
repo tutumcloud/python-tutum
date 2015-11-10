@@ -27,7 +27,7 @@ from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 from tutum.api.nodeaz import AZ
 
-__version__ = '0.16.21'
+__version__ = '0.20.0'
 
 # : The username used to authenticate with the API
 user = os.environ.get('TUTUM_USER', None) or auth.load_from_file()[0]

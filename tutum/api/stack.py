@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from .base import Mutable
 from .exceptions import TutumApiError
-from http import send_request
+from .http import send_request
 
 
 class Stack(Mutable):
@@ -24,13 +25,14 @@ class Stack(Mutable):
         """
         return self._perform_action("stop")
 
-    def redeploy(self):
+    def redeploy(self, reuse_volumes=True):
         """Redeploy the stack in Tutum.
 
         :returns: bool -- whether or not the operation succeeded
         :raises: TutumApiError
         """
-        return self._perform_action("redeploy")
+        params = {'reuse_volumes': reuse_volumes}
+        return self._perform_action("redeploy", params=params)
 
     def export(self):
         """Export the stack in Tutum.

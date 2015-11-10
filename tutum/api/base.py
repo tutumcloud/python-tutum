@@ -1,3 +1,4 @@
+from __future__ import absolute_import, print_function
 import json as json_parser
 import urllib
 import logging
@@ -74,13 +75,13 @@ class Restful(object):
         """
         return len(self.__getchanges__()) > 0
 
-    def _perform_action(self, action, data={}):
+    def _perform_action(self, action, params=None, data={}):
         """Internal. Performs the specified action on the object remotely"""
         success = False
         if not self._detail_uri:
             raise TutumApiError("You must save the object before performing this operation")
         url = "/".join([self._detail_uri, action])
-        json = send_request("POST", url, data=data)
+        json = send_request("POST", url, params=params, data=data)
         if json:
             self._loaddict(json)
             success = True
@@ -330,7 +331,7 @@ class StreamingLog(StreamingAPI):
 
     @staticmethod
     def default_log_handler(message):
-        print message
+        print(message)
 
     def run_forever(self, *args, **kwargs):
         ws = websocket.WebSocketApp(self.url, header=self.header,
