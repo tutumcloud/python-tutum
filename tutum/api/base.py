@@ -340,3 +340,26 @@ class StreamingLog(StreamingAPI):
                                     on_error=self._on_error,
                                     on_close=self._on_close)
         ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)
+
+
+class Exec(StreamingAPI):
+    def __init__(self, uuid, cmd='sh'):
+        if tutum.tutum_auth:
+            endpoint = "container/%s/exec/?auth=%s" % (uuid, urllib.quote_plus(tutum.tutum_auth))
+        else:
+            endpoint = "container/%s/exec/?user=%s&token=%s" % (uuid, tutum.user, tutum.apikey)
+
+        endpoint = "%s&command=%s" % (endpoint, urllib.quote_plus(cmd))
+        super(self.__class__, self).__init__(endpoint)
+
+    @staticmethod
+    def default_message_handler(message):
+        print(message)
+
+    def run_forever(self, *args, **kwargs):
+        ws = websocket.WebSocketApp(self.url, header=self.header,
+                                    on_open=self._on_open,
+                                    on_message=self._on_message,
+                                    on_error=self._on_error,
+                                    on_close=self._on_close)
+        ws.run_forever(ping_interval=5, ping_timeout=5, *args, **kwargs)
