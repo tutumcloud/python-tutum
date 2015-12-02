@@ -5,6 +5,7 @@ import os
 import tutum
 from requests.auth import HTTPBasicAuth
 from .http import send_request
+import configparser
 
 
 def authenticate(username, password):
@@ -49,24 +50,26 @@ def logout():
     tutum.basic_auth = None
 
 
-# def load_from_file(file="~/.docker/config.json", site="https://index.docker.io/v1/"):
-def load_from_file(file="~/.tutum", site="tutum.co"):
+def load_from_file(f="~/.tutum"):
     """Attempts to read tutum's credentials from a config file
 
-    :param file: The filename where the auth config is stored
-    :type file: str
-    :param site: load which website's auth
-    :type site: str
-    :returns: str -- the auth of the give website. empty string, when error occurs
+    :param f: The filename where the auth config is stored
+    :type f: str
+    :returns: str, str -- the basic auth and apikey auth
     """
     try:
-        with open(os.path.expanduser(file)) as f:
-            data = f.read()
-            cfg = json.loads(data)
-        auth = cfg.get("auths", {}).get(site, {}).get("auth")
-        return auth
-    except Exception as e:
-        return None
+        cp = configparser.SafeConfigParser({'user': None, 'apikey': None, 'basic_auth': None})
+        cp.read(os.path.expanduser(f))
+        basic_auth = cp.get("auth", "basic_auth")
+        user = cp.get("auth", "user")
+        apikey = cp.get("auth", "apikey")
+        if user and apikey:
+            apikey_auth = "%s:%s" % (user, apikey)
+        else:
+            apikey_auth = None
+        return basic_auth, apikey_auth
+    except configparser.Error as e:
+        return None, None
 
 
 def get_auth_header():

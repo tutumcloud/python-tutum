@@ -64,14 +64,17 @@ class AuthTestCase(unittest.TestCase):
     def test_auth_load_from_file(self):
         file = tempfile.NamedTemporaryFile('w', delete=False)
         with file as f:
-            f.write(('{"auths":{"tutum.co":{"auth":"%s"}}}' % FAKE_BASIC_AUTH))
-        auth = tutum.auth.load_from_file(file.name, "tutum.co")
-        self.assertEqual(auth, FAKE_BASIC_AUTH)
+            f.writelines(["[auth]\n", "user = %s\n" % FAKE_USER, "apikey = %s\n" % FAKE_APIKEY,
+                          "basic_auth = %s\n" % FAKE_BASIC_AUTH])
+        basic_auth, apikey_auth = tutum.auth.load_from_file(file.name)
+        self.assertEqual(basic_auth, FAKE_BASIC_AUTH)
+        self.assertEqual(apikey_auth, "%s:%s" % (FAKE_USER, FAKE_APIKEY))
         os.remove(file.name)
 
     def test_auth_load_from_file_with_exception(self):
-        auth = tutum.auth.load_from_file('abc', 'abc')
-        self.assertIsNone(auth)
+        basic_auth, apikey_auth = tutum.auth.load_from_file('abc')
+        self.assertIsNone(basic_auth)
+        self.assertIsNone(apikey_auth)
 
     def test_auth_get_auth_header(self):
         tutum.tutum_auth = FAKE_TUTUM_AUTH
