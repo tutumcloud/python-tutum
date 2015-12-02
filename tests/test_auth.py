@@ -1,94 +1,100 @@
 from __future__ import absolute_import
-import os
 import tempfile
 import unittest
-
-import configparser
-
 import unittest.mock as mock
+import os
 import tutum
 from .fake_api import *
 
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
-        self.user = tutum.user
-        self.apikey = tutum.apikey
+        self.tutum_auth = tutum.tutum_auth
+        self.basic_auth = tutum.basic_auth
 
     def tearDown(self):
-        tutum.user = self.user
-        tutum.apikey = tutum.apikey
+        tutum.tutum_auth = self.tutum_auth
+        tutum.basic_auth = self.basic_auth
 
     def test_baseurl(self):
         self.assertTrue(tutum.base_url)
 
-    @mock.patch('tutum.api.auth.get_auth')
-    def test_auth_authenticate(self, mock_get_auth):
-        mock_get_auth.return_value = (FAKE_USER, FAKE_APIKEY)
+    @mock.patch('tutum.api.auth.verify_credential')
+    def test_auth_authenticate(self, mock_verify_credential):
         tutum.auth.authenticate(FAKE_USER, FAKE_PASSWORD)
-        self.assertEqual(FAKE_USER, tutum.user)
-        self.assertEqual(FAKE_APIKEY, tutum.apikey)
+        mock_verify_credential.assert_called_with(FAKE_USER, FAKE_PASSWORD)
+        self.assertEqual(tutum.basic_auth, FAKE_BASIC_AUTH)
         self.tearDown()
 
-    @mock.patch.object(tutum.api.http.Session, 'send')
-    def test_auth_get_auth(self, mock_send):
-        mock_send.return_value = fake_resp(fake_auth)
-        user, apikey = tutum.auth.get_auth(FAKE_USER, FAKE_PASSWORD)
-        self.assertEqual(FAKE_USER, user)
-        self.assertEqual(FAKE_APIKEY, apikey)
-
     def test_auth_is_authenticated(self):
-        tutum.user = FAKE_USER
-        tutum.apikey = FAKE_APIKEY
+        tutum.tutum_auth = FAKE_TUTUM_AUTH
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
         self.assertTrue(tutum.auth.is_authenticated())
 
-        tutum.user = None
-        tutum.apikey = FAKE_APIKEY
-        self.assertFalse(tutum.auth.is_authenticated())
+        tutum.tutum_auth = None
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = None
+        self.assertTrue(tutum.auth.is_authenticated())
 
-        tutum.user = FAKE_USER
-        tutum.apikey = None
-        self.assertFalse(tutum.auth.is_authenticated())
+        tutum.tutum_auth = FAKE_TUTUM_AUTH
+        tutum.basic_auth = None
+        tutum.apikey_auth = None
+        self.assertTrue(tutum.auth.is_authenticated())
 
-        tutum.user = None
-        tutum.apikey = None
+        tutum.tutum_auth = None
+        tutum.basic_auth = None
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
+        self.assertTrue(tutum.auth.is_authenticated())
+
+        tutum.tutum_auth = None
+        tutum.basic_auth = None
+        tutum.apikey_auth = None
         self.assertFalse(tutum.auth.is_authenticated())
 
     def test_auth_logout(self):
-        tutum.user = FAKE_USER
-        tutum.apikey = FAKE_APIKEY
+        tutum.tutum_auth = FAKE_TUTUM_AUTH
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
         tutum.auth.logout()
-        self.assertIsNone(tutum.user)
-        self.assertIsNone(tutum.apikey)
+        self.assertIsNone(tutum.tutum_auth)
+        self.assertIsNone(tutum.basic_auth)
+        self.assertIsNone(tutum.apikey_auth)
 
     def test_auth_load_from_file(self):
         file = tempfile.NamedTemporaryFile('w', delete=False)
         with file as f:
-            f.writelines(["[auth]\n", "user = %s\n" % FAKE_USER, "apikey = %s\n" % FAKE_APIKEY])
-        user_read, apikey_read = tutum.auth.load_from_file(file.name)
-        self.assertEqual(user_read, FAKE_USER)
-        self.assertEqual(apikey_read, FAKE_APIKEY)
+            f.write(('{"auths":{"tutum.co":{"auth":"%s"}}}' % FAKE_BASIC_AUTH))
+        auth = tutum.auth.load_from_file(file.name, "tutum.co")
+        self.assertEqual(auth, FAKE_BASIC_AUTH)
         os.remove(file.name)
 
-    @mock.patch.object(tutum.auth.configparser.ConfigParser, 'read', side_effect=configparser.Error)
-    def test_auth_load_from_file_with_exception(self, mock_read):
-        user_read, apikey_read = tutum.auth.load_from_file('abc')
-        self.assertIsNone(user_read)
-        self.assertIsNone(apikey_read)
+    def test_auth_load_from_file_with_exception(self):
+        auth = tutum.auth.load_from_file('abc', 'abc')
+        self.assertIsNone(auth)
 
     def test_auth_get_auth_header(self):
-        tutum.user = FAKE_USER
-        tutum.apikey = FAKE_APIKEY
-        self.assertEqual({'Authorization': 'ApiKey %s:%s' % (FAKE_USER, FAKE_APIKEY)}, tutum.auth.get_auth_header())
+        tutum.tutum_auth = FAKE_TUTUM_AUTH
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
+        self.assertEqual({'Authorization': FAKE_TUTUM_AUTH}, tutum.auth.get_auth_header())
 
-        tutum.user = None
-        tutum.apikey = FAKE_APIKEY
-        self.assertEqual({}, tutum.auth.get_auth_header())
+        tutum.tutum_auth = None
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
+        self.assertEqual({'Authorization': 'Apikey %s' % (tutum.apikey_auth)}, tutum.auth.get_auth_header())
 
-        tutum.user = FAKE_USER
-        tutum.apikey = None
-        self.assertEqual({}, tutum.auth.get_auth_header())
+        tutum.tutum_auth = None
+        tutum.basic_auth = FAKE_BASIC_AUTH
+        tutum.apikey_auth = None
+        self.assertEqual({'Authorization': 'Basic %s' % (FAKE_BASIC_AUTH)}, tutum.auth.get_auth_header())
 
-        tutum.user = None
-        tutum.apikey = None
+        tutum.tutum_auth = FAKE_TUTUM_AUTH
+        tutum.basic_auth = None
+        tutum.apikey_auth = FAKE_APIKEY_AUTH
+        self.assertEqual({'Authorization': FAKE_TUTUM_AUTH}, tutum.auth.get_auth_header())
+
+        tutum.tutum_auth = None
+        tutum.basic_auth = None
+        tutum.apikey_auth = None
         self.assertEqual({}, tutum.auth.get_auth_header())

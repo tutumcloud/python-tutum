@@ -1,11 +1,13 @@
 import json
 import datetime
-
 import requests
 
 FAKE_USER = 'fake_tutum_user'
 FAKE_PASSWORD = 'fake_tutum_password'
-FAKE_APIKEY = 'dff93a893ec78e4305ff57c75721f38bdc8384f6'
+FAKE_TUTUM_AUTH = 'fake_tutum_auth'
+FAKE_BASIC_AUTH = 'ZmFrZV90dXR1bV91c2VyOmZha2VfdHV0dW1fcGFzc3dvcmQ='
+FAKE_APIKEY_AUTH = 'ZmFrZV90dXR1bV91c2VyOmZha2VfdHV0dW1fYXBpa2V5'
+FAKE_APIKEY = 'fake_tutum_apikey'
 FAKE_EMAIL = 'fake@fack.tutum.co'
 FAKE_UUID = 'b0374cc2-4003-4270-b131-25fc494ea2be'
 FAKE_UUIDS = ['b0374cc2-4003-4270-b131-25fc494ea2be', 'd89fc6f9-d7ec-4602-be94-429c65d6657d',

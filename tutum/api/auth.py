@@ -1,10 +1,9 @@
 from __future__ import absolute_import
+import base64
+import json
 import os
-
-import configparser
-from requests.auth import HTTPBasicAuth
-
 import tutum
+from requests.auth import HTTPBasicAuth
 from .http import send_request
 
 
@@ -17,15 +16,12 @@ def authenticate(username, password):
     :type password: str.
     :raises: TutumAuthError
     """
-    user, apikey = get_auth(username, password)
-    if user:
-        tutum.user = user
-    if apikey:
-        tutum.apikey = apikey
+    verify_credential(username, password)
+    tutum.basic_auth = base64.b64encode("%s:%s" % (username, password))
 
 
-def get_auth(username, password):
-    """Returns the user's Username and ApiKey, or raises an exception if username/password incorrect
+def verify_credential(username, password):
+    """verify if username/password incorrect
 
     :param username: The username/email of the user to authenticate
     :type username: str
@@ -35,15 +31,7 @@ def get_auth(username, password):
     :returns: str, str -- the Username, ApiKey to use for the given username/email
     """
     auth = HTTPBasicAuth(username, password)
-    json = send_request("GET", "/auth", auth=auth)
-    user = username
-    apikey = None
-    if json:
-        objects = json.get('objects', None)
-        if objects and len(objects) > 0:
-            user = objects[0].get('username', username)
-            apikey = objects[0].get('key')
-    return user, apikey
+    send_request("GET", "/auth", auth=auth)
 
 
 def is_authenticated():
@@ -51,35 +39,41 @@ def is_authenticated():
 
     :returns: bool -- whether the tutum user and apikey are set
     """
-    return tutum.tutum_auth or (tutum.user != None and tutum.apikey != None)
+    return tutum.tutum_auth or tutum.apikey_auth or tutum.basic_auth
 
 
 def logout():
     """Sets the tutum user and apikey to None"""
-    tutum.user = None
-    tutum.apikey = None
+    tutum.tutum_auth = None
+    tutum.apikey_auth = None
+    tutum.basic_auth = None
 
 
-def load_from_file(file="~/.tutum"):
-    """Attempts to read tutum's credentials from a config file and return a tuple of (user, apikey)
+# def load_from_file(file="~/.docker/config.json", site="https://index.docker.io/v1/"):
+def load_from_file(file="~/.tutum", site="tutum.co"):
+    """Attempts to read tutum's credentials from a config file
 
-    :param file: The filename where Tutum auth config is stored
+    :param file: The filename where the auth config is stored
     :type file: str
-    :returns: tuple -- tuple of (user, apikey) if config found and valid, (None, None) otherwise
+    :param site: load which website's auth
+    :type site: str
+    :returns: str -- the auth of the give website. empty string, when error occurs
     """
     try:
-        cfgfile = os.path.expanduser(file)
-        cp = configparser.ConfigParser()
-        cp.read(cfgfile)
-        return cp.get("auth", "user"), cp.get("auth", "apikey")
-    except configparser.Error:
-        return None, None
+        with open(os.path.expanduser(file)) as f:
+            data = f.read()
+            cfg = json.loads(data)
+        auth = cfg.get("auths", {}).get(site, {}).get("auth")
+        return auth
+    except Exception as e:
+        return None
 
 
 def get_auth_header():
     if tutum.tutum_auth:
         return {'Authorization': tutum.tutum_auth}
-    if tutum.user and tutum.apikey:
-        return {'Authorization': 'ApiKey %s:%s' % (tutum.user, tutum.apikey)}
-    else:
-        return {}
+    if tutum.apikey_auth:
+        return {'Authorization': 'Apikey %s' % tutum.apikey_auth}
+    if tutum.basic_auth:
+        return {'Authorization': 'Basic %s' % tutum.basic_auth}
+    return {}

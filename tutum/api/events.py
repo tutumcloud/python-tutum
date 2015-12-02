@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 import urllib
 import json
-
 import websocket
-
 import tutum
 from .exceptions import TutumAuthError
 from .base import StreamingAPI

@@ -1,8 +1,6 @@
 from __future__ import absolute_import
 import unittest
-
 import requests
-
 import urllib.parse
 import unittest.mock as mock
 import tutum
