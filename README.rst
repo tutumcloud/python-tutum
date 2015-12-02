@@ -19,35 +19,33 @@ It will install a Python module called ``tutum`` which you can use to interface 
 Authorization
 -------------
 
-In order to be able to make requests to the API, you need to set ``Basic Authentication`` in each request.
+In order to be able to make requests to the API, you should first obtain an ApiKey for your account.
+For this, log into Tutum, click on the menu on the upper right corner of the screen, and select **Get Api Key**
 
-You can setup with the Python library in any of the following ways (will be used in this order):
+You can use your ApiKey with the Python library in any of the following ways (will be used in this order):
 
 * Manually set it in your Python initialization code:
 
 .. sourcecode:: python
 
     import tutum
-    tutum.basic_auth = "<username:password(base64 encoded)>"
+    tutum.user = "username"
+    tutum.apikey = "apikey"
 
 * Store it in a configuration file in ``~/.tutum``:
 
-.. sourcecode:: json
+.. sourcecode:: ini
 
-    {
-        "auths": {
-            "tutum.co": {
-                "auth": "<username:password(base64 encoded)>",
-            }
-        }
-    }
+    [auth]
+    user = "username"
+    apikey = "apikey"
 
-* Set the environment variables ``TUTUM_USER`` and ``TUTUM_PASS``:
+* Set the environment variables ``TUTUM_USER`` and ``TUTUM_APIKEY``:
 
 .. sourcecode:: bash
 
-    export TUTUM_USER=<username>
-    export TUTUM_PASS=<password>
+    export TUTUM_USER=username
+    export TUTUM_APIKEY=apikey
 
 
 Errors
@@ -109,4 +107,3 @@ Containers
     "2014-03-24 23:58:08,973 CRIT Supervisor running as root (no user in config file) [...]"
     >>> container.delete()
     True
-
