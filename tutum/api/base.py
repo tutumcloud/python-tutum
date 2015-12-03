@@ -2,9 +2,7 @@ from __future__ import absolute_import, print_function
 import json as json_parser
 import urllib
 import logging
-
 import websocket
-
 import tutum
 from .http import send_request
 from .exceptions import TutumApiError, TutumAuthError
@@ -268,7 +266,9 @@ class StreamingAPI(object):
         user_agent = 'python-tutum/%s' % tutum.__version__
         if tutum.user_agent:
             user_agent = "%s %s" % (tutum.user_agent, user_agent)
-        self.header = {'User-Agent': user_agent}
+        header = {'User-Agent': user_agent}
+        header.update(tutum.auth.get_auth_header())
+        self.header = [": ".join([key, value]) for key, value in header.items()]
         logger.info("websocket: %s %s" % (self.url, self.header))
         self.open_handler = None
         self.message_handler = None
@@ -318,14 +318,9 @@ class StreamingAPI(object):
 
 class StreamingLog(StreamingAPI):
     def __init__(self, obj_type, uuid, tail, follow):
-        if tutum.tutum_auth:
-            endpoint = "%s/%s/logs/?auth=%s" % (obj_type, uuid, urllib.quote_plus(tutum.tutum_auth))
-        else:
-            endpoint = "%s/%s/logs/?user=%s&token=%s" % (obj_type, uuid, tutum.user, tutum.apikey)
+        endpoint = "%s/%s/logs/?follow=%s" % (obj_type, uuid, str(follow).lower())
         if tail:
             endpoint = "%s&tail=%d" % (endpoint, tail)
-        if not follow:
-            endpoint = "%s&follow=%s" % (endpoint, str(follow).lower())
 
         super(self.__class__, self).__init__(endpoint)
 
@@ -344,12 +339,7 @@ class StreamingLog(StreamingAPI):
 
 class Exec(StreamingAPI):
     def __init__(self, uuid, cmd='sh'):
-        if tutum.tutum_auth:
-            endpoint = "container/%s/exec/?auth=%s" % (uuid, urllib.quote_plus(tutum.tutum_auth))
-        else:
-            endpoint = "container/%s/exec/?user=%s&token=%s" % (uuid, tutum.user, tutum.apikey)
-
-        endpoint = "%s&command=%s" % (endpoint, urllib.quote_plus(cmd))
+        endpoint = "container/%s/exec/?command=%s" % (uuid, urllib.quote_plus(cmd))
         super(self.__class__, self).__init__(endpoint)
 
     @staticmethod

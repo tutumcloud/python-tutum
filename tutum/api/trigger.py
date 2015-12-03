@@ -1,5 +1,4 @@
 import json as json_parser
-
 from .base import Triggerable
 from .http import send_request
 from .exceptions import TutumApiError

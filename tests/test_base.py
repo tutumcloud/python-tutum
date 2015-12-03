@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import unittest
 import json
-
 import unittest.mock as mock
 import tutum
 from tutum.api.base import Restful, Mutable, Immutable

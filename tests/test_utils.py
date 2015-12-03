@@ -1,5 +1,4 @@
 import unittest
-
 import unittest.mock as mock
 import tutum
 from tutum.api.exceptions import ObjectNotFound, TutumApiError, NonUniqueIdentifier
@@ -127,7 +126,6 @@ class FetchRemoteObjectTestCase(unittest.TestCase):
         self.assertRaises(ObjectNotFound, tutum.Utils.fetch_remote_node, '7A4CFE51-03BB-42D6-825E-3B533888D8CD', True)
         self.assertIsInstance(tutum.Utils.fetch_remote_node('7A4CFE51-03BB-42D6-825E-3B533888D8CD', False),
                               ObjectNotFound)
-
 
         # test unique node found queried with short uuid
         node = tutum.Node.create()

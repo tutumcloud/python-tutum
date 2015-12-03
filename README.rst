@@ -107,4 +107,3 @@ Containers
     "2014-03-24 23:58:08,973 CRIT Supervisor running as root (no user in config file) [...]"
     >>> container.delete()
     True
-
