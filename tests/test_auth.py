@@ -29,12 +29,10 @@ class AuthTestCase(unittest.TestCase):
     def test_auth_is_authenticated(self):
         tutum.tutum_auth = FAKE_TUTUM_AUTH
         tutum.basic_auth = FAKE_BASIC_AUTH
-        tutum.apikey_auth = FAKE_APIKEY_AUTH
         self.assertTrue(tutum.auth.is_authenticated())
 
         tutum.tutum_auth = None
         tutum.basic_auth = FAKE_BASIC_AUTH
-        tutum.apikey_auth = None
         self.assertTrue(tutum.auth.is_authenticated())
 
         tutum.tutum_auth = FAKE_TUTUM_AUTH
@@ -44,12 +42,6 @@ class AuthTestCase(unittest.TestCase):
 
         tutum.tutum_auth = None
         tutum.basic_auth = None
-        tutum.apikey_auth = FAKE_APIKEY_AUTH
-        self.assertTrue(tutum.auth.is_authenticated())
-
-        tutum.tutum_auth = None
-        tutum.basic_auth = None
-        tutum.apikey_auth = None
         self.assertFalse(tutum.auth.is_authenticated())
 
     def test_auth_logout(self):
@@ -79,25 +71,16 @@ class AuthTestCase(unittest.TestCase):
     def test_auth_get_auth_header(self):
         tutum.tutum_auth = FAKE_TUTUM_AUTH
         tutum.basic_auth = FAKE_BASIC_AUTH
-        tutum.apikey_auth = FAKE_APIKEY_AUTH
         self.assertEqual({'Authorization': FAKE_TUTUM_AUTH}, tutum.auth.get_auth_header())
 
         tutum.tutum_auth = None
         tutum.basic_auth = FAKE_BASIC_AUTH
-        tutum.apikey_auth = FAKE_APIKEY_AUTH
-        self.assertEqual({'Authorization': 'Apikey %s' % (tutum.apikey_auth)}, tutum.auth.get_auth_header())
-
-        tutum.tutum_auth = None
-        tutum.basic_auth = FAKE_BASIC_AUTH
-        tutum.apikey_auth = None
         self.assertEqual({'Authorization': 'Basic %s' % (FAKE_BASIC_AUTH)}, tutum.auth.get_auth_header())
 
         tutum.tutum_auth = FAKE_TUTUM_AUTH
         tutum.basic_auth = None
-        tutum.apikey_auth = FAKE_APIKEY_AUTH
         self.assertEqual({'Authorization': FAKE_TUTUM_AUTH}, tutum.auth.get_auth_header())
 
         tutum.tutum_auth = None
         tutum.basic_auth = None
-        tutum.apikey_auth = None
         self.assertEqual({}, tutum.auth.get_auth_header())

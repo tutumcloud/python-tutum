@@ -36,11 +36,7 @@ basic_auth, apikey_auth = auth.load_from_file("~/.tutum")
 if os.environ.get('TUTUM_USER') and os.environ.get('TUTUM_PASS'):
     basic_auth = base64.b64encode("%s:%s" % (os.environ.get('TUTUM_USER'), os.environ.get('TUTUM_PASS')))
 if os.environ.get('TUTUM_USER') and os.environ.get('TUTUM_APIKEY'):
-    # apikey with username will be obsoleted soon, only used for backward compatibility
-    apikey_auth = "%s:%s" % (os.environ.get('TUTUM_USER'), os.environ.get('TUTUM_APIKEY'))
-    # basic_auth = base64.b64encode("%s:%s" % (os.environ.get('TUTUM_USER'), os.environ.get('TUTUM_APIKEY')))
-if not os.environ.get('TUTUM_USER') and os.environ.get('TUTUM_APIKEY'):
-    apikey_auth = os.environ.get('TUTUM_APIKEY')
+    basic_auth = base64.b64encode("%s:%s" % (os.environ.get('TUTUM_USER'), os.environ.get('TUTUM_APIKEY')))
 
 #: The API endpoint to use
 rest_host = os.environ.get('TUTUM_REST_HOST', 'https://dashboard.tutum.co')

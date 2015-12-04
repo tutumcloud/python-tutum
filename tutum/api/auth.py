@@ -68,15 +68,13 @@ def load_from_file(f="~/.tutum"):
         else:
             apikey_auth = None
         return basic_auth, apikey_auth
-    except configparser.Error as e:
+    except Exception:
         return None, None
 
 
 def get_auth_header():
     if tutum.tutum_auth:
         return {'Authorization': tutum.tutum_auth}
-    if tutum.apikey_auth:
-        return {'Authorization': 'Apikey %s' % tutum.apikey_auth}
     if tutum.basic_auth:
         return {'Authorization': 'Basic %s' % tutum.basic_auth}
     return {}
