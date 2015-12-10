@@ -9,10 +9,7 @@ from .base import StreamingAPI
 
 class TutumEvents(StreamingAPI):
     def __init__(self):
-        if tutum.tutum_auth:
-            endpoint = "events?auth=%s" % urllib.quote_plus(tutum.tutum_auth)
-        else:
-            endpoint = "events?user=%s&token=%s" % (tutum.user, tutum.apikey)
+        endpoint = "events"
         super(self.__class__, self).__init__(endpoint)
 
     def _on_message(self, ws, message):
