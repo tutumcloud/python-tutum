@@ -8,7 +8,7 @@ from .exceptions import TutumApiError, TutumAuthError
 
 def send_request(method, path, inject_header=True, **kwargs):
     json = None
-    url = urljoin(tutum.base_url, path.strip("/"))
+    url = urljoin(tutum.base_url, path.strip("/").encode("ascii", "ignore"))
     if not url.endswith("/"):
         url = "%s/" % url
     user_agent = 'python-tutum/%s' % tutum.__version__
