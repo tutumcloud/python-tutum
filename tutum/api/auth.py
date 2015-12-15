@@ -73,6 +73,11 @@ def load_from_file(f="~/.tutum"):
 
 
 def get_auth_header():
+    try:
+        tutum.basic_auth = base64.b64encode("%s:%s" % (tutum.user, tutum.apikey))
+    except:
+        pass
+
     if tutum.tutum_auth:
         return {'Authorization': tutum.tutum_auth}
     if tutum.basic_auth:
