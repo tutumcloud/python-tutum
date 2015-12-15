@@ -27,7 +27,7 @@ from tutum.api.utils import Utils
 from tutum.api.events import TutumEvents
 from tutum.api.nodeaz import AZ
 
-__version__ = '0.21.1'
+__version__ = '0.21.2'
 
 # Set auth properties: tutum_auth, basic_auth, and apikey
 
